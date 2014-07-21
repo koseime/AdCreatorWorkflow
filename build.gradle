@@ -1,4 +1,4 @@
-apply plugin: 'gradle-one-jar'
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'distribution'
 apply plugin: 'maven'
@@ -7,6 +7,7 @@ apply plugin: 'release'
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
         maven {
             url "https://oss.sonatype.org/content/groups/public"
         }
@@ -15,6 +16,7 @@ buildscript {
     dependencies {
         classpath 'com.github.rholder:gradle-one-jar:1.0.4'
         classpath 'com.github.townsfolk:gradle-release:1.2'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.0.2'
     }
 }
 
@@ -32,7 +34,6 @@ targetCompatibility = '1.7'
 configurations {
     deployerJars
     onejar
-    provided
 }
 
 repositories {
@@ -46,17 +47,6 @@ repositories {
 project.ext {
 }
 
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-        runtimeClasspath += configurations.provided
-    }
-    test {
-        compileClasspath += configurations.provided
-        runtimeClasspath += configurations.provided
-    }
-}
-
 dependencies {
     compile(
             'org.apache.hadoop:hadoop-common:2.2.0',
@@ -68,26 +58,10 @@ dependencies {
             'org.mockito:mockito-all:1.9.5',
     )
     deployerJars 'org.apache.maven.wagon:wagon-webdav-jackrabbit:2.6'
-    onejar "com.kosei.services:services-common:${servicesCommonVersion}:one-jar@properties"
-}
-
-task copyOneJarProperties(type: Copy) {
-    from configurations.onejar
-    into "${buildDir}/one-jar"
-    rename '.*.properties', 'one-jar.properties'
-}
-
-// Configure the oneJar task
-task oneJar(type: OneJar, dependsOn: copyOneJarProperties) {
-    mainClass = mainClassName
-    additionalDir = file("${buildDir}/one-jar")
-    manifest {
-        attributes 'Implementation-Version': version
-    }
 }
 
 artifacts {
-    archives oneJar
+    archives shadowJar
 }
 
 uploadArchives {
