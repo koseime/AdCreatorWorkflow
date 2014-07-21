@@ -10,7 +10,7 @@ import java.io.IOException;
  * Created by lanceriedel on 7/17/14.
  */
 public class AdCreatorAssetsWritable implements Writable {
-    public static final int STATUS_ENPTY = 0;
+    public static final int STATUS_EMPTY = 0;
     public static final int STATUS_RAW = 1;
     public static final int STATUS_IMAGE_RETRIEVED = 2;
 
@@ -25,7 +25,7 @@ public class AdCreatorAssetsWritable implements Writable {
         this.longProductDesc = new Text();
         this.lowPicURI = new Text();
         this.thumbPicURI = new Text();
-        this.status = new IntWritable(STATUS_ENPTY);
+        this.status = new IntWritable(STATUS_EMPTY);
         generatedJpgAd = null;
     }
 

@@ -27,6 +27,11 @@ public class ImageCrawlerMapper extends
             uri = value.getLowPicURI().toString();
         }
 
+
+        if (value.getStatus().get()==AdCreatorAssetsWritable.STATUS_IMAGE_RETRIEVED) {
+            Logger.getLogger(ImageCrawlerMapper.class.getName()).log(Level.INFO, "Image Already retrieved ID:" + value.getId());
+
+        }
         try {
             String type = "";
             URLConnection conn;
@@ -37,7 +42,7 @@ public class ImageCrawlerMapper extends
                 conn.connect();
                 type = conn.getContentType();
             } catch (Exception e) {
-                Logger.getLogger(ImageCrawlerMapper.class.getName()).log(Level.SEVERE, "ID:" + value.getId(), e);
+                Logger.getLogger(ImageCrawlerMapper.class.getName()).log(Level.SEVERE, "ID:" + value.getId() + " URL:" + uri, e);
                 context.write(NullWritable.get(), value);
                 return;
             }
@@ -48,9 +53,9 @@ public class ImageCrawlerMapper extends
 
             context.write(NullWritable.get(), value);
         } catch (IOException ex) {
-            Logger.getLogger(ImageCrawlerMapper.class.getName()).log(Level.SEVERE, "ID:" + value.getId(), ex);
+            Logger.getLogger(ImageCrawlerMapper.class.getName()).log(Level.SEVERE, "ID:" + value.getId()+ " URL:" + uri, ex);
         } catch (NullPointerException ex) {
-            Logger.getLogger(ImageCrawlerMapper.class.getName()).log(Level.SEVERE, "ID:" + value.getId(), ex);
+            Logger.getLogger(ImageCrawlerMapper.class.getName()).log(Level.SEVERE, "ID:" + value.getId()+ " URL:" + uri, ex);
         }
 
     }
