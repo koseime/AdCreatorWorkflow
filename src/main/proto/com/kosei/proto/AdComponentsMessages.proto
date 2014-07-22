@@ -1,0 +1,19 @@
+package com.kosei.proto;
+
+message AdComponents {
+    enum Status {
+        EMPTY = 0;
+        RAW = 1;
+        IMAGE_RETRIEVED = 2;
+        AD_GENERATED = 3;
+        IMAGE_RETRIEVAL_FAILURE = 4;
+    }
+
+    optional bytes generatedJpgAd = 1;
+    required string id = 2;
+    required string description = 3;
+    optional string title = 4;
+    required Status status = 5;
+    optional bytes logoJpg = 6;
+    optional bytes productJpg = 7;
+}

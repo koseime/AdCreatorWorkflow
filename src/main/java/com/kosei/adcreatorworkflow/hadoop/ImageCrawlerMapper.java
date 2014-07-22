@@ -1,12 +1,18 @@
 package com.kosei.adcreatorworkflow.hadoop;
 
+import com.google.protobuf.ByteString;
+import com.twitter.elephantbird.mapreduce.io.ProtobufWritable;
+
+
 import com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable;
+import com.kosei.proto.AdComponentsMessages.AdComponents;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,7 +20,7 @@ import java.util.logging.Logger;
  * @author root
  */
 public class ImageCrawlerMapper extends
-        Mapper<NullWritable, AdCreatorAssetsWritable, NullWritable, AdCreatorAssetsWritable> {
+        Mapper<NullWritable, AdCreatorAssetsWritable, NullWritable, ProtobufWritable<AdComponents>> {
 
 
     @Override
@@ -43,7 +49,13 @@ public class ImageCrawlerMapper extends
                 type = conn.getContentType();
             } catch (Exception e) {
                 Logger.getLogger(ImageCrawlerMapper.class.getName()).log(Level.SEVERE, "ID:" + value.getId() + " URL:" + uri, e);
-                context.write(NullWritable.get(), value);
+                ProtobufWritable<AdComponents> out = ProtobufWritable.newInstance(AdComponents.class);
+                out.set(AdComponents.newBuilder().setId(value.getId().toString())
+                        .setDescription(value.getProductDesc().toString())
+                        .setProductJpg(ByteString.copyFrom(new byte[0]))
+                        .setStatus(AdComponents.Status.IMAGE_RETRIEVAL_FAILURE)
+                        .build());
+                context.write(NullWritable.get(), out);
                 return;
             }
 
@@ -51,7 +63,13 @@ public class ImageCrawlerMapper extends
             value.setGeneratedJpgAd(data);
             value.setStatus(AdCreatorAssetsWritable.STATUS_IMAGE_RETRIEVED);
 
-            context.write(NullWritable.get(), value);
+            ProtobufWritable<AdComponents> out = ProtobufWritable.newInstance(AdComponents.class);
+            out.set(AdComponents.newBuilder().setId(value.getId().toString())
+                    .setDescription(value.getProductDesc().toString())
+                    .setProductJpg(ByteString.copyFrom(data))
+                    .setStatus(AdComponents.Status.IMAGE_RETRIEVED)
+                    .build());
+            context.write(NullWritable.get(), out);
         } catch (IOException ex) {
             Logger.getLogger(ImageCrawlerMapper.class.getName()).log(Level.SEVERE, "ID:" + value.getId()+ " URL:" + uri, ex);
         } catch (NullPointerException ex) {

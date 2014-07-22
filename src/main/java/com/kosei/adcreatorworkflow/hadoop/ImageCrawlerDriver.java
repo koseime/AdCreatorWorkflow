@@ -1,6 +1,7 @@
 package com.kosei.adcreatorworkflow.hadoop;
 
 import com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable;
+import com.twitter.elephantbird.mapreduce.io.ProtobufWritable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -54,10 +55,10 @@ public class ImageCrawlerDriver {
         job.setNumReduceTasks(0);
         job.setInputFormatClass(SequenceFileInputFormat.class);
         job.setMapOutputKeyClass(NullWritable.class);
-        job.setMapOutputValueClass(AdCreatorAssetsWritable.class);
+        job.setMapOutputValueClass(ProtobufWritable.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
         job.setOutputKeyClass(NullWritable.class);
-        job.setOutputValueClass(AdCreatorAssetsWritable.class);
+        job.setOutputValueClass(ProtobufWritable.class);
         Path outPath = new Path(output);
         FileOutputFormat.setOutputPath(job, outPath);
         FileSystem dfs = FileSystem.get(outPath.toUri(), conf);
