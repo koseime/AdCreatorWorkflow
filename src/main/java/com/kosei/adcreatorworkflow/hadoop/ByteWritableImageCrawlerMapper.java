@@ -94,11 +94,7 @@ public class ByteWritableImageCrawlerMapper extends
     public byte[] objectToByteBuffer(Object o) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Message message = (Message) o;
-        byte[] name = message.getDescriptorForType().getFullName()
-                .getBytes("UTF-8");
-        baos.write(name.length); // TODO: Length as int and not byte
-        // Write the full descriptor name, i.e. protobuf.Person
-        baos.write(name);
+
         byte[] messageBytes = message.toByteArray();
         baos.write(messageBytes.length); // TODO: Length as int and not byte
         baos.write(messageBytes);
