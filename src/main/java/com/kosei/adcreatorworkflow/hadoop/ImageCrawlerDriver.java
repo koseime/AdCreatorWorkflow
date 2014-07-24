@@ -5,6 +5,7 @@ import com.twitter.elephantbird.mapreduce.io.ProtobufWritable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -51,14 +52,14 @@ public class ImageCrawlerDriver {
 
         FileInputFormat.setInputPaths(job, input);
         job.setJarByClass(ImageCrawlerDriver.class);
-        job.setMapperClass(ImageCrawlerMapper.class);
+        job.setMapperClass(ByteWritableImageCrawlerMapper.class);
         job.setNumReduceTasks(0);
         job.setInputFormatClass(SequenceFileInputFormat.class);
         job.setMapOutputKeyClass(NullWritable.class);
-        job.setMapOutputValueClass(ProtobufWritable.class);
+        job.setMapOutputValueClass(BytesWritable.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
         job.setOutputKeyClass(NullWritable.class);
-        job.setOutputValueClass(ProtobufWritable.class);
+        job.setOutputValueClass(BytesWritable.class);
         Path outPath = new Path(output);
         FileOutputFormat.setOutputPath(job, outPath);
         FileSystem dfs = FileSystem.get(outPath.toUri(), conf);
