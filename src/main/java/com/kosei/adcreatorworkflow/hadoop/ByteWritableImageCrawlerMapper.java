@@ -92,13 +92,10 @@ public class ByteWritableImageCrawlerMapper extends
 
 
     public byte[] objectToByteBuffer(Object o) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Message message = (Message) o;
 
         byte[] messageBytes = message.toByteArray();
-        baos.write(messageBytes.length); // TODO: Length as int and not byte
-        baos.write(messageBytes);
-        return baos.toByteArray();
+        return messageBytes;
     }
 
     public static byte[] readFully(InputStream input) throws IOException {

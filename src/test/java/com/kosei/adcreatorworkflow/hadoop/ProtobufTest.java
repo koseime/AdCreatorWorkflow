@@ -8,6 +8,8 @@ import org.apache.hadoop.io.NullWritable;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +25,13 @@ public class ProtobufTest {
                 .setStatus(AdComponentsMessages.AdComponents.Status.IMAGE_RETRIEVAL_FAILURE)
                 .build();
         try {
+
+            FileOutputStream os = new FileOutputStream(new File("/tmp/orig.dat"));
+            os.write(objectToByteBuffer(ad));
+            os.close();
             BytesWritable bw = new BytesWritable(objectToByteBuffer(ad));
+
+
             System.out.println("out:" + bw);
             return;
         } catch (Exception e2) {
@@ -38,9 +46,9 @@ public class ProtobufTest {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Message message = (Message) o;
 
-        byte[] messageBytes = message.toByteArray();
-        baos.write(messageBytes.length); // TODO: Length as int and not byte
-        baos.write(messageBytes);
-        return baos.toByteArray();
+        String messageAsString = message.toString();
+        return messageAsString.getBytes();
+//        baos.write(messageAsString.);
+//        return baos.toByteArray();
     }
 }
