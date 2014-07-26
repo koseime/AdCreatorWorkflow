@@ -113,6 +113,10 @@ protoBuf {
         'Mac OS X' {
             path = "/usr/local/bin/protoc"
         }
+	'Linux' {
+           path = "/usr/local/bin/protoc"
+        }
+
     }
 
     // Optional, defaults to 'src/main/proto'
