@@ -1,0 +1,52 @@
+<coordinator-app name="cef-converter-coordinator" frequency="${coord:minutes(5)}" start="${jobStart}" end="${jobEnd}"
+    timezone="America/Los_Angeles"
+    xmlns="uri:oozie:coordinator:0.1">
+    <datasets>
+        <dataset name="logs" frequency="${coord:minutes(5)}"
+            initial-instance="${initialDataset}" timezone="America/Los_Angeles">
+            <uri-template>${rootPath}/${YEAR}/${MONTH}/${DAY}/${HOUR}</uri-template>
+            <done-flag></done-flag>
+        </dataset>
+        <dataset name="processed" frequency="${coord:minutes(5)}"
+            initial-instance="${initialDataset}" timezone="America/Los_Angeles">
+            <uri-template>${outputRootPath}/${YEAR}/${MONTH}/${DAY}/${HOUR}</uri-template>
+        </dataset>
+    </datasets>
+    <input-events>
+        <data-in name="input" dataset="logs">
+            <instance>${coord:current(0)}</instance>
+        </data-in>
+    </input-events>
+    <output-events>
+        <data-out name="output" dataset="processed">
+            <instance>${coord:current(0)}</instance>
+        </data-out>
+    </output-events>
+    <action>
+        <workflow>
+            <app-path>${workflowRoot}/converter-process-action.xml</app-path>
+            <configuration>
+                <property>
+                    <name>jobTracker</name>
+                    <value>${jobTracker}</value>
+                </property>
+                <property>
+                    <name>nameNode</name>
+                    <value>${nameNode}</value>
+                </property>
+                <property>
+                    <name>queueName</name>
+                    <value>default</value>
+                </property>
+                <property>
+                    <name>inputs</name>
+                    <value>${coord:dataIn('input')}</value>
+                </property>
+                <property>
+                    <name>outputs</name>
+                    <value>${coord:dataOut('output')}</value>
+                </property>
+            </configuration>
+        </workflow>
+    </action>
+</coordinator-app>

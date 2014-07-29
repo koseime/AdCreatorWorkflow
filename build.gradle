@@ -15,7 +15,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.github.rholder:gradle-one-jar:1.0.4'
         classpath 'com.github.townsfolk:gradle-release:1.2'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.0.2'
         classpath 'com.tomcawley:gradle-protobuf-plugin:0.2'
@@ -62,6 +61,9 @@ dependencies {
     testCompile(
             'junit:junit:4.11',
             'org.mockito:mockito-all:1.9.5',
+            'org.apache.mrunit:mrunit:1.0.0:hadoop2',
+            'org.powermock:powermock-module-junit4-legacy:1.5.5',
+            'org.powermock:powermock-api-mockito:1.5.5'
     )
     deployerJars 'org.apache.maven.wagon:wagon-webdav-jackrabbit:2.6'
 }
@@ -107,6 +109,15 @@ task wrapper(type: Wrapper) {
     gradleVersion = '1.12'
 }
 
+
+idea {
+    module {
+        excludeDirs = [file(".gradle")]
+        ["classes", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp", "poms"].each {
+            excludeDirs << file("$buildDir/$it")
+        }
+    }
+}
 
 protoBuf {
     protoc {

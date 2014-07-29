@@ -1,0 +1,18 @@
+nameNode=hdfs://localhost:9000
+jobTracker=localhost:9001
+queueName=default
+hdfsconfig=${nameNode}
+
+
+
+#securityx-workflow - configs
+
+
+workflowRoot=${nameNode}/user/lanceriedel/kosei/adcreator/oozie/adcreatorworkflow
+
+
+#oozie.use.system.libpath=true
+oozie.coord.application.path=${workflowRoot}/workflow-process-action.xml
+#oozie.wf.rerun.failnodes=true
+
+#oozie.libpath=/user/oozie/share/lib/mapreduce-streaming/
