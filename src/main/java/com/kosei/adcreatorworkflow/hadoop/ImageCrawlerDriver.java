@@ -1,7 +1,5 @@
 package com.kosei.adcreatorworkflow.hadoop;
 
-import com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable;
-import com.twitter.elephantbird.mapreduce.io.ProtobufWritable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -29,7 +27,6 @@ public class ImageCrawlerDriver {
     public static void main(String[] args) {
         try {
             runJob(args[0], args[1]);
-
         } catch (IOException ex) {
             Logger.getLogger(ImageCrawlerDriver.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -69,9 +66,7 @@ public class ImageCrawlerDriver {
 
 
         try {
-
             job.waitForCompletion(true);
-
         } catch (InterruptedException ex) {
             Logger.getLogger(ImageCrawlerDriver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {

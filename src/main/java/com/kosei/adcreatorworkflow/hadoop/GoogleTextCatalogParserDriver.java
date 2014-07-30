@@ -26,7 +26,6 @@ public class GoogleTextCatalogParserDriver {
     public static void main(String[] args) {
         try {
             runJob(args[0], args[1]);
-
         } catch (IOException ex) {
             Logger.getLogger(GoogleTextCatalogParserDriver.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -39,7 +38,7 @@ public class GoogleTextCatalogParserDriver {
 
         Configuration conf = new Configuration();
 
-       conf
+        conf
                 .set(
                         "io.serializations",
                         "org.apache.hadoop.io.serializer.JavaSerialization,org.apache.hadoop.io.serializer.WritableSerialization");
@@ -64,9 +63,7 @@ public class GoogleTextCatalogParserDriver {
 
 
         try {
-
             job.waitForCompletion(true);
-
         } catch (InterruptedException ex) {
             Logger.getLogger(GoogleTextCatalogParserDriver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {

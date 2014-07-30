@@ -5,15 +5,8 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +21,6 @@ public class GoogleTextParserMapper extends
 
     @Override
     public void map(LongWritable key, Text value1,Context context)
-
             throws IOException, InterruptedException {
 
         String googleCatRecord = value1.toString();
@@ -37,22 +29,19 @@ public class GoogleTextParserMapper extends
         try {
             GoogleProductItem gpi = GoogleProductItem.fromParse(googleCatRecord);
 
-
             String productId =gpi.getId();
             String lowPicURI =gpi.getAdditionalImageLink();
             String thumbPicURI =gpi.getAdditionalImageLink();
             String productDesc = gpi.getTitle();
             String longProductDesc = gpi.getDescription();
 
-
-            AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId, lowPicURI,  thumbPicURI,  AdCreatorAssetsWritable.STATUS_RAW, null,
-            productDesc,  longProductDesc);
-
+            AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId, lowPicURI, thumbPicURI,
+                    AdCreatorAssetsWritable.STATUS_RAW, null, productDesc, longProductDesc);
 
             context.write(NullWritable.get(), ad);
             context.getCounter(ParserEnum.SUCCESS).increment(1);
 
-        }  catch (IOException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(GoogleTextParserMapper.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NullPointerException ex) {
             Logger.getLogger(GoogleTextParserMapper.class.getName()).log(Level.SEVERE, null, ex);

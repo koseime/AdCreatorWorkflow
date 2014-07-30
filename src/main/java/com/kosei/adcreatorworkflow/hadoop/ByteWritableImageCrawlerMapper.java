@@ -36,7 +36,6 @@ public class ByteWritableImageCrawlerMapper extends
 
         if (value.getStatus().get() == AdCreatorAssetsWritable.STATUS_IMAGE_RETRIEVED) {
             Logger.getLogger(ByteWritableImageCrawlerMapper.class.getName()).log(Level.INFO, "Image Already retrieved ID:" + value.getId());
-
         }
         try {
             String type = "";
@@ -93,7 +92,6 @@ public class ByteWritableImageCrawlerMapper extends
 
     public byte[] objectToByteBuffer(Object o) throws Exception {
         Message message = (Message) o;
-
         byte[] messageBytes = message.toByteArray();
         return messageBytes;
     }

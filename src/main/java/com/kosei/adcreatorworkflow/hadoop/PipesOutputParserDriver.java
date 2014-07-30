@@ -1,7 +1,5 @@
 package com.kosei.adcreatorworkflow.hadoop;
 
-import com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable;
-import com.twitter.elephantbird.mapreduce.io.ProtobufWritable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -28,7 +26,7 @@ public class PipesOutputParserDriver {
      */
     public static void main(String[] args) {
         try {
-            runJob(args[0], args[1]);
+            runJob(args[0], args[1], args[2]);
 
         } catch (IOException ex) {
             Logger.getLogger(ImageCrawlerDriver.class.getName()).log(Level.SEVERE, null, ex);
@@ -38,7 +36,8 @@ public class PipesOutputParserDriver {
 
 
     public static void runJob(String input,
-                              String output ) throws IOException {
+                              String output,
+                              String tarOutput) throws IOException {
 
         Configuration conf = new Configuration();
 
@@ -46,6 +45,7 @@ public class PipesOutputParserDriver {
                 .set(
                         "io.serializations",
                         "org.apache.hadoop.io.serializer.JavaSerialization,org.apache.hadoop.io.serializer.WritableSerialization");
+        conf.set("tar.output", tarOutput);
 
         Job job = new Job(conf, "ImageCrawler:" + input);
 
@@ -53,11 +53,11 @@ public class PipesOutputParserDriver {
         FileInputFormat.setInputPaths(job, input);
         job.setJarByClass(ImageCrawlerDriver.class);
         job.setMapperClass(PipesOutputParserMapper.class);
+        job.setReducerClass(PipesOutputParserReducer.class);
         job.setNumReduceTasks(1);
         job.setInputFormatClass(SequenceFileInputFormat.class);
         job.setMapOutputKeyClass(NullWritable.class);
         job.setMapOutputValueClass(BytesWritable.class);
-        job.setReducerClass(PipesOutputParserReducer.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(BytesWritable.class);
@@ -70,9 +70,7 @@ public class PipesOutputParserDriver {
 
 
         try {
-
             job.waitForCompletion(true);
-
         } catch (InterruptedException ex) {
             Logger.getLogger(ImageCrawlerDriver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
