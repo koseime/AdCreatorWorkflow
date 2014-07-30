@@ -3,12 +3,13 @@
     <start to="parse-catalog"/>
 
     <action name='parse-catalog'>
+
         <map-reduce>
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
-             <prepare>
-                 <delete path="${nameNode}/${outputDir}"/>
-             </prepare>
+            <prepare>
+                <delete path="${homeRoot}/${outputDir}"/>
+            </prepare>
 
             <configuration>
                 <property>
@@ -61,12 +62,16 @@
     </action>
 
     <action name='crawl-catalog'>
+
+
         <map-reduce>
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
-                <delete path="${nameNode}/${outputCrawlDir}"/>
+                <delete path="${homeRoot}/${outputCrawlDir}"/>
             </prepare>
+
+
 
             <configuration>
                 <property>
@@ -120,13 +125,16 @@
 
 
     <action name='ad-create'>
+
+
+
+
         <map-reduce>
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
-                <delete path="${nameNode}/${outputImageTar}"/>
+                <delete path="${homeRoot}/${outputImageTar}"/>
             </prepare>
-
             <!--
 
             /*

@@ -2,6 +2,9 @@ To Run:
 export OOZIE_URL=http://localhost:11000/oozie
 export PATH=<include oozie bin>
 
+NOTE: weird hangs if history server is not running:
+ ./mr-jobhistory-daemon.sh start historyserver (from hadoop install)
+
 All paths for bin, images, and lib are from workflowroot (defined in workflow.properties):
 e.g. workflowRoot=${nameNode}/user/lanceriedel/kosei/adcreator/oozie/adcreatorworkflow
 
@@ -17,4 +20,4 @@ There is a hack script to deploy what is needed to HDFS here:
 Command to run:
 oozie job -config workflow.properties -run -DinputDir=<input catalog file>  -DoutputDir=<output directory>  -DoutputCrawlDir=<output of crawl job> -DworkflowRoot=<oozie workfow root>  -DoutputImageTar=<outputAdImages>
 
-oozie job -config workflow.properties -run -DinputDir=kosei/adcreator/input/catalog/amazon/2014/07/28/google-input.txt -DoutputDir=kosei/adcreator/output/catalog/amazon/catalog16 -DoutputCrawlDir=kosei/adcreator/output/catalog/amazon/catalog-images16 -DoutputImageTar=kosei/adcreator/output/catalog/amazon/catalog-ads16 -DworkflowRoot=hdfs://localhost:9000/user/lanceriedel/kosei/adcreator/oozie/adcreatorworkflow
+oozie job -config workflow.properties -run -DinputDir=kosei/adcreator/input/catalog/amazon/2014/07/28/google-input.txt -DoutputDir=kosei/adcreator/output/catalog/amazon/catalog-20140728 -DoutputCrawlDir=kosei/adcreator/output/catalog/amazon/catalog-images-20140728 -DoutputImageTar=kosei/adcreator/output/catalog/amazon/catalog-ads-20140728 -DworkflowRoot=hdfs://localhost:9000/user/lanceriedel/kosei/adcreator/oozie/adcreatorworkflow
