@@ -60,7 +60,7 @@ public class PipesOutputParserDriver {
         job.setMapOutputValueClass(BytesWritable.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
         job.setOutputKeyClass(NullWritable.class);
-        job.setOutputValueClass(BytesWritable.class);
+        job.setOutputValueClass(NullWritable.class);
         Path outPath = new Path(output);
         FileOutputFormat.setOutputPath(job, outPath);
         FileSystem dfs = FileSystem.get(outPath.toUri(), conf);
