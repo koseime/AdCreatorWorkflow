@@ -1,0 +1,7 @@
+To Run:
+export OOZIE_URL=http://localhost:11000/oozie
+export PATH=<include oozie bin>
+
+oozie job -config workflow.properties -run -DinputDir=<input catalog file>  -DoutputDir=<output directory>  -DoutputCrawlDir=<output of crawl job> -DworkflowRoot=<oozie workfow root>  -DoutputImageTar=<outputAdImages>
+
+oozie job -config workflow.properties -run -DinputDir=kosei/adcreator/input/catalog/amazon/2014/07/28/google-input.txt -DoutputDir=kosei/adcreator/output/catalog/amazon/catalog16 -DoutputCrawlDir=kosei/adcreator/output/catalog/amazon/catalog-images16 -DoutputImageTar=kosei/adcreator/output/catalog/amazon/catalog-ads16 -DworkflowRoot=hdfs://localhost:9000/user/lanceriedel/kosei/adcreator/oozie/adcreatorworkflow
