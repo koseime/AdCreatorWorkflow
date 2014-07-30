@@ -119,8 +119,6 @@
     </action>
 
 
-
-
     <action name='ad-create'>
         <map-reduce>
             <job-tracker>${jobTracker}</job-tracker>
