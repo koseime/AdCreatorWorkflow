@@ -21,8 +21,14 @@ There is a hack script to deploy what is needed to HDFS here:
 
 Command to run:
 
-oozie job -config workflow.properties -run -DinputDir=<input catalog file>  -DoutputDir=<output directory>  -DoutputCrawlDir=<output of crawl job> -DworkflowRoot=<oozie workfow root>  -DoutputImageTar=<outputAdImages>
+oozie job -config workflow.properties -run -DinputDir=<input catalog file>  -DoutputDir=<output directory>  -DoutputCrawlDir=<output of crawl job> -DoutputImageProcessed=<output of ad creation> -DworkflowRoot=<oozie workfow root>  -DoutputImageTar=<outputAdImages>
 
 
 e.g.:
-oozie job -config workflow.properties -run -DinputDir=kosei/adcreator/input/catalog/amazon/2014/07/28/google-input.txt -DoutputDir=kosei/adcreator/output/catalog/amazon/catalog-20140728 -DoutputCrawlDir=kosei/adcreator/output/catalog/amazon/catalog-images-20140728 -DoutputImageTar=kosei/adcreator/output/catalog/amazon/catalog-ads-20140728 -DworkflowRoot=hdfs://localhost:9000/user/lanceriedel/kosei/adcreator/oozie/adcreatorworkflow
+oozie job -config workflow.properties -run \
+-DinputDir=kosei/adcreator/input/catalog/amazon/2014/07/28/google-input.txt \
+-DoutputDir=kosei/adcreator/output/catalog/amazon/catalog-20140728 \
+-DoutputCrawlDir=kosei/adcreator/output/catalog/amazon/catalog-images-20140728 \
+-DoutputImageProcessed=kosei/adcreator/output/catalog/amazon/catalog-images-processed-20140728 \
+-DoutputImageTar=hdfs://localhost:9000/user/lanceriedel/kosei/adcreator/output/catalog/amazon/catalog-ads-20140728/img.tar \
+-DworkflowRoot=hdfs://localhost:9000/user/lanceriedel/kosei/adcreator/oozie/adcreatorworkflow
