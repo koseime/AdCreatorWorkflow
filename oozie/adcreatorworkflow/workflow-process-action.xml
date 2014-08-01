@@ -180,10 +180,14 @@
                     <name>hadoop.pipes.java.recordwriter</name>
                     <value>true</value>
                 </property>
+
+                <property>
+                    <name>layout.resource.tar</name>
+                    <value>${layoutResourceTar}</value>
+                </property>
             </configuration>
 
-            <file>images/320x50Border.png</file>
-
+            <file>hdfs://localhost:9000/tmp/border/layout_resource.tar.gz</file>
 
         </map-reduce>
         <ok to="parse-pipes-output"/>

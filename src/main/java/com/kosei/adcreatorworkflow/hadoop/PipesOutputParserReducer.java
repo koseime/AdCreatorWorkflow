@@ -42,17 +42,20 @@ public class PipesOutputParserReducer extends
         TarArchiveOutputStream tarOut = new TarArchiveOutputStream(gzOut);
 
         for(BytesWritable value : values) {
-            AdComponents ad = AdComponents.parseFrom(getValidBytes(value));
+            AdComponents adComponents = AdComponents.parseFrom(getValidBytes(value));
 
-            String file_name = ad.getId() + ".jpg";
-            TarArchiveEntry tarEntry = new TarArchiveEntry(file_name);
-            tarEntry.setSize(ad.getGeneratedJpgAd().size());
-            tarOut.putArchiveEntry(tarEntry);
+            for (int i = 0; i < adComponents.getGeneratedAdsCount(); i++) {
+                AdComponents.Ad ad = adComponents.getGeneratedAds(i);
+                String file_name = adComponents.getId() + "_" + ad.getLayoutName() + ".jpg";
+                TarArchiveEntry tarEntry = new TarArchiveEntry(file_name);
+                tarEntry.setSize(ad.getAdJpg().size());
+                tarOut.putArchiveEntry(tarEntry);
 
-            ByteArrayInputStream imageStream= new ByteArrayInputStream(ad.getGeneratedJpgAd().toByteArray());
-            IOUtils.copy(imageStream , tarOut);
-            imageStream.close();
-            tarOut.closeArchiveEntry();
+                ByteArrayInputStream imageStream = new ByteArrayInputStream(ad.getAdJpg().toByteArray());
+                IOUtils.copy(imageStream, tarOut);
+                imageStream.close();
+                tarOut.closeArchiveEntry();
+            }
         }
         tarOut.finish();
         tarOut.close();
