@@ -8,21 +8,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
-import org.apache.commons.io.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
-import org.apache.hadoop.metrics.spi.NullContextWithUpdateThread;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
@@ -40,7 +34,9 @@ public class PipesOutputParserTest {
     MapReduceDriver<Text, Text, NullWritable, BytesWritable, NullWritable, NullWritable> mapReduceDriver;
 
     Configuration conf;
-    AdComponents ad1, ad2;
+    AdComponents adComponents1, adComponents2;
+
+    List<BytesWritable> values;
 
     @Before
     public void setUp() throws IOException {
@@ -60,35 +56,44 @@ public class PipesOutputParserTest {
 
         InputStream in1 = getClass().getResourceAsStream("/vacuum1.jpg");
         byte[] image1ByteArray = IOUtils.toByteArray(in1);
-        ad1 = AdComponents.newBuilder()
+        AdComponents.Ad ad1 = AdComponents.Ad.newBuilder()
+                .setLayoutName("ad1")
+                .setAdJpg(ByteString.copyFrom(image1ByteArray))
+                .build();
+        adComponents1 = AdComponents.newBuilder()
                 .setId("test product 1")
                 .setDescription("test description 1")
-                .setGeneratedJpgAd(ByteString.copyFrom(image1ByteArray))
+                .addGeneratedAds(ad1)
                 .setStatus(AdComponents.Status.IMAGE_RETRIEVED)
                 .build();
 
         InputStream in2 = getClass().getResourceAsStream("/vacuum2.jpg");
         byte[] image2ByteArray = IOUtils.toByteArray(in2);
-        ad2 = AdComponents.newBuilder()
+        AdComponents.Ad ad2 = AdComponents.Ad.newBuilder()
+                .setLayoutName("ad2")
+                .setAdJpg(ByteString.copyFrom(image2ByteArray))
+                .build();
+        adComponents2 = AdComponents.newBuilder()
                 .setId("test product 2")
                 .setDescription("test description 2")
-                .setGeneratedJpgAd(ByteString.copyFrom(image2ByteArray))
+                .addGeneratedAds(ad2)
                 .setStatus(AdComponents.Status.IMAGE_RETRIEVED)
                 .build();
+
+        values = new ArrayList<BytesWritable>();
+        values.add(new BytesWritable(adComponents1.toByteArray()));
+        values.add(new BytesWritable(adComponents2.toByteArray()));
     }
 
     @Test
     public void testMapper() throws IOException {
-        mapDriver.withInput(new Text(""), new Text(ad1.toByteArray()));
-        mapDriver.withOutput(NullWritable.get(), new BytesWritable(ad1.toByteArray()));
+        mapDriver.withInput(new Text(""), new Text(adComponents1.toByteArray()));
+        mapDriver.withOutput(NullWritable.get(), new BytesWritable(adComponents1.toByteArray()));
         mapDriver.runTest();
     }
 
     @Test
     public void testReducer() throws IOException, InterruptedException {
-        List<BytesWritable> values = new ArrayList<BytesWritable>();
-        values.add(new BytesWritable(ad1.toByteArray()));
-        values.add(new BytesWritable(ad2.toByteArray()));
         reduceDriver.withInput(NullWritable.get(), values);
         reduceDriver.withOutput(NullWritable.get(), NullWritable.get());
         reduceDriver.runTest();
@@ -106,12 +111,12 @@ public class PipesOutputParserTest {
         assertNotNull(tarIn.getNextTarEntry());
         ByteArrayOutputStream imageStream1 = new ByteArrayOutputStream();
         IOUtils.copy(tarIn, imageStream1);
-        assertTrue(Arrays.equals(ad1.getGeneratedJpgAd().toByteArray(), imageStream1.toByteArray()));
+        assertTrue(Arrays.equals(adComponents1.getGeneratedAds(0).getAdJpg().toByteArray(), imageStream1.toByteArray()));
 
         assertNotNull(tarIn.getNextTarEntry());
         ByteArrayOutputStream imageStream2 = new ByteArrayOutputStream();
         IOUtils.copy(tarIn, imageStream2);
-        assertTrue(Arrays.equals(ad2.getGeneratedJpgAd().toByteArray(), imageStream2.toByteArray()));
+        assertTrue(Arrays.equals(adComponents2.getGeneratedAds(0).getAdJpg().toByteArray(), imageStream2.toByteArray()));
 
         assertNull(tarIn.getNextEntry());
 
