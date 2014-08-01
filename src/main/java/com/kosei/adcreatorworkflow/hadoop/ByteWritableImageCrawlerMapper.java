@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 public class ByteWritableImageCrawlerMapper extends
         Mapper<NullWritable, AdCreatorAssetsWritable, NullWritable, BytesWritable> {
 
+    private final static Logger LOG = Logger.getLogger(ByteWritableImageCrawlerMapper.class.getName());
 
     @Override
     public void map(NullWritable key, AdCreatorAssetsWritable value, Context context)
@@ -35,7 +36,7 @@ public class ByteWritableImageCrawlerMapper extends
 
 
         if (value.getStatus().get() == AdCreatorAssetsWritable.STATUS_IMAGE_RETRIEVED) {
-            Logger.getLogger(ByteWritableImageCrawlerMapper.class.getName()).log(Level.INFO, "Image Already retrieved ID:" + value.getId());
+            LOG.log(Level.INFO, "Image Already retrieved ID:" + value.getId());
         }
         try {
             String type = "";
@@ -47,7 +48,7 @@ public class ByteWritableImageCrawlerMapper extends
                 conn.connect();
                 type = conn.getContentType();
             } catch (Exception e) {
-                Logger.getLogger(ByteWritableImageCrawlerMapper.class.getName()).log(Level.SEVERE, "ID:" + value.getId() + " URL:" + uri, e);
+                LOG.log(Level.SEVERE, "ID:" + value.getId() + " URL:" + uri, e);
                 AdComponents ad = AdComponents.newBuilder().setId(value.getId().toString())
                         .setDescription(value.getProductDesc().toString())
                         .setProductJpg(ByteString.copyFrom(new byte[0]))
@@ -58,7 +59,7 @@ public class ByteWritableImageCrawlerMapper extends
                     context.write(NullWritable.get(), bw);
                     return;
                 } catch (Exception e2) {
-                    Logger.getLogger(ByteWritableImageCrawlerMapper.class.getName()).log(Level.SEVERE, "Failed writable.. ID:" + value.getId() + " URL:" + uri, e2);
+                    LOG.log(Level.SEVERE, "Failed writable.. ID:" + value.getId() + " URL:" + uri, e2);
                     return;
                 }
             }
@@ -78,13 +79,13 @@ public class ByteWritableImageCrawlerMapper extends
                 context.write(NullWritable.get(), bw);
                 return;
             } catch (Exception e2) {
-                Logger.getLogger(ByteWritableImageCrawlerMapper.class.getName()).log(Level.SEVERE, "Failed writable.. ID:" + value.getId() + " URL:" + uri, e2);
+                LOG.log(Level.SEVERE, "Failed writable.. ID:" + value.getId() + " URL:" + uri, e2);
                 return;
             }
         } catch (IOException ex) {
-            Logger.getLogger(ByteWritableImageCrawlerMapper.class.getName()).log(Level.SEVERE, "ID:" + value.getId() + " URL:" + uri, ex);
+            LOG.log(Level.SEVERE, "ID:" + value.getId() + " URL:" + uri, ex);
         } catch (NullPointerException ex) {
-            Logger.getLogger(ByteWritableImageCrawlerMapper.class.getName()).log(Level.SEVERE, "ID:" + value.getId() + " URL:" + uri, ex);
+            LOG.log(Level.SEVERE, "ID:" + value.getId() + " URL:" + uri, ex);
         }
 
     }
