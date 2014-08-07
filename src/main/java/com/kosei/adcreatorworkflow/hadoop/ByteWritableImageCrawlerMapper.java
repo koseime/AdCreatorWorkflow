@@ -6,6 +6,8 @@ import com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable;
 import com.kosei.proto.AdComponentsMessages.AdComponents;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.ByteArrayOutputStream;
@@ -13,6 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,13 +54,13 @@ public class ByteWritableImageCrawlerMapper extends
                 type = conn.getContentType();
             } catch (Exception e) {
                 LOG.log(Level.SEVERE, "ID:" + value.getId() + " URL:" + uri, e);
-                AdComponents ad = AdComponents.newBuilder().setId(value.getId().toString())
+                AdComponents.Builder adBuilder = AdComponents.newBuilder().setId(value.getId().toString())
                         .setDescription(value.getProductDesc().toString())
                         .setProductJpg(ByteString.copyFrom(new byte[0]))
-                        .setStatus(AdComponents.Status.IMAGE_RETRIEVAL_FAILURE)
-                        .build();
+                        .setStatus(AdComponents.Status.IMAGE_RETRIEVAL_FAILURE);
+                putMeta(adBuilder, value.entrySetMeta());
                 try {
-                    BytesWritable bw = new BytesWritable(objectToByteBuffer(ad));
+                    BytesWritable bw = new BytesWritable(objectToByteBuffer(adBuilder.build()));
                     context.write(NullWritable.get(), bw);
                     return;
                 } catch (Exception e2) {
@@ -69,13 +74,16 @@ public class ByteWritableImageCrawlerMapper extends
             value.setGeneratedJpgAd(data);
             value.setStatus(AdCreatorAssetsWritable.STATUS_IMAGE_RETRIEVED);
 
-            AdComponents ad = AdComponents.newBuilder().setId(value.getId().toString())
+            AdComponents.Builder adBuilder = AdComponents.newBuilder().setId(value.getId().toString())
                     .setDescription(value.getProductDesc().toString())
                     .setProductJpg(ByteString.copyFrom(data))
-                    .setStatus(AdComponents.Status.IMAGE_RETRIEVED)
-                    .build();
+                    .setStatus(AdComponents.Status.IMAGE_RETRIEVED);
+            //System.err.println(value.entrySetMeta().size());
+            putMeta(adBuilder, value.entrySetMeta());
+            //System.err.print(adBuilder.build().getMeta(0).getKey() + " ");
+            //System.err.println(adBuilder.build().getMeta(0).getValue());
             try {
-                BytesWritable bw = new BytesWritable(objectToByteBuffer(ad));
+                BytesWritable bw = new BytesWritable(objectToByteBuffer(adBuilder.build()));
                 context.write(NullWritable.get(), bw);
                 return;
             } catch (Exception e2) {
@@ -107,4 +115,20 @@ public class ByteWritableImageCrawlerMapper extends
         return output.toByteArray();
     }
 
+    public void putMeta(AdComponents.Builder adBuilder, Set<Map.Entry<Writable, Writable>> entries) {
+        Iterator i = entries.iterator();
+        while (i.hasNext()) {
+            Map.Entry<Writable, Writable> keyValue = (Map.Entry<Writable, Writable>)i.next();
+            Text key = (Text)keyValue.getKey();
+            BytesWritable value = (BytesWritable)keyValue.getValue();
+
+            AdComponents.Meta metaEntry = AdComponents.Meta.newBuilder()
+                    .setKey(key.toString())
+                    .setValue(ByteString.copyFrom(value.copyBytes()))
+                    .build();
+            //System.err.print(key.toString() + " ");
+            //System.err.println(value.copyBytes());
+            adBuilder.addMeta(metaEntry);
+        }
+    }
 }

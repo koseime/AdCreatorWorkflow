@@ -14,6 +14,11 @@ message AdComponents {
         required bytes adJpg = 2;
     }
 
+    message Meta {
+        required string key = 1;
+        required bytes value = 2;
+    }
+
     required string id = 1;
     required string description = 2;
     optional string title = 3;
@@ -21,4 +26,5 @@ message AdComponents {
     optional bytes productJpg = 5;
     optional string manifest = 6;
     repeated Ad generatedAds = 7;
+    repeated Meta meta = 8;
 }

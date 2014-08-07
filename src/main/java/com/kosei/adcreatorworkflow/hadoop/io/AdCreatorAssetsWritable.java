@@ -5,6 +5,8 @@ import org.apache.hadoop.io.*;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by lanceriedel on 7/17/14.
@@ -19,6 +21,8 @@ public class AdCreatorAssetsWritable implements Writable {
     private Text id, lowPicURI, thumbPicURI, productDesc, longProductDesc;
     private IntWritable status;
 
+    private MapWritable meta;
+
     public AdCreatorAssetsWritable() {
         this.id = new Text();
         this.productDesc = new Text();
@@ -26,6 +30,7 @@ public class AdCreatorAssetsWritable implements Writable {
         this.lowPicURI = new Text();
         this.thumbPicURI = new Text();
         this.status = new IntWritable(STATUS_EMPTY);
+        this.meta = new MapWritable();
         generatedJpgAd = null;
     }
 
@@ -38,6 +43,7 @@ public class AdCreatorAssetsWritable implements Writable {
         this.thumbPicURI = thumbPicURI;
         this.lowPicURI = lowPicURI;
         this.status = status;
+        this.meta = new MapWritable();
         this.generatedJpgAd = generatedJpgAd;
     }
 
@@ -51,12 +57,14 @@ public class AdCreatorAssetsWritable implements Writable {
         this.status = new IntWritable(status);
         if (generatedJpgAd==null)
             generatedJpgAd = new byte[0];
+        this.meta = new MapWritable();
         this.generatedJpgAd = new BytesWritable(generatedJpgAd);
     }
 
 
     @Override
     public void readFields(DataInput in) throws IOException {
+        meta.readFields(in);
         id.readFields(in);
         productDesc.readFields(in);
         longProductDesc.readFields(in);
@@ -73,13 +81,16 @@ public class AdCreatorAssetsWritable implements Writable {
 
     @Override
     public void write(DataOutput out) throws IOException {
+        meta.write(out);
         id.write(out);
         productDesc.write(out);
         longProductDesc.write(out);
         lowPicURI.write(out);
         thumbPicURI.write(out);
         status.write(out);
-        generatedJpgAd.write(out);
+        if (status.get() != 1) {
+            generatedJpgAd.write(out);
+        }
     }
 
 
@@ -126,4 +137,10 @@ public class AdCreatorAssetsWritable implements Writable {
     public IntWritable getStatus() {
         return status;
     }
+
+    public Writable putMeta(Text key, BytesWritable value) { return meta.put(key, value); }
+
+    public BytesWritable getMeta(Text key) { return (BytesWritable)meta.get(key); }
+
+    public Set<Map.Entry<Writable, Writable>> entrySetMeta() { return meta.entrySet(); }
 }

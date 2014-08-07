@@ -1,9 +1,7 @@
 package com.kosei.adcreatorworkflow.hadoop;
 
 import com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
@@ -34,9 +32,16 @@ public class GoogleTextParserMapper extends
             String thumbPicURI =gpi.getAdditionalImageLink();
             String productDesc = gpi.getTitle();
             String longProductDesc = gpi.getDescription();
+            String price = gpi.getPrice();
+            String category = gpi.getGoogleProductCategory();
 
             AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId, lowPicURI, thumbPicURI,
                     AdCreatorAssetsWritable.STATUS_RAW, null, productDesc, longProductDesc);
+            ad.putMeta(new Text("price"), new BytesWritable(price.getBytes()));
+            ad.putMeta(new Text("category"), new BytesWritable(category.getBytes()));
+            //System.err.print("price " + price + " ");
+            //System.err.println(new String(price.getBytes()));
+            //System.err.println(new String(category.getBytes()));
 
             context.write(NullWritable.get(), ad);
             context.getCounter(ParserEnum.SUCCESS).increment(1);

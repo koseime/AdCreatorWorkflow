@@ -9,18 +9,20 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.*;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONObject;
 
 /**
  * @author root
  */
 public class PipesOutputParserReducer extends
-        Reducer<NullWritable, BytesWritable, NullWritable, NullWritable> {
+        Reducer<NullWritable, BytesWritable, NullWritable, Text> {
 
     @Override
     public void reduce(NullWritable key, Iterable<BytesWritable> values, Context context)
@@ -33,14 +35,6 @@ public class PipesOutputParserReducer extends
         if (hdfs.exists(file)) { hdfs.delete(file, true); }
 
         FSDataOutputStream out = hdfs.create(file);
-        createTar(values, out);
-        out.close();
-
-        context.write(NullWritable.get(), NullWritable.get());
-    }
-
-    private void createTar(Iterable<BytesWritable> values, DataOutputStream out)
-            throws IOException, InterruptedException {
         BufferedOutputStream bufferedOut = new BufferedOutputStream(out);
         GzipCompressorOutputStream gzOut = new GzipCompressorOutputStream(bufferedOut);
         TarArchiveOutputStream tarOut = new TarArchiveOutputStream(gzOut);
@@ -60,11 +54,24 @@ public class PipesOutputParserReducer extends
                 imageStream.close();
                 tarOut.closeArchiveEntry();
             }
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", adComponents.getId());
+            for (int i = 0; i < adComponents.getMetaCount(); i++) {
+                AdComponents.Meta metaEntry = adComponents.getMeta(i);
+                // TODO: ask Lance what format should be output
+                jsonObject.put(metaEntry.getKey(), new String(metaEntry.getValue().toByteArray()));
+            }
+            //System.err.print(adComponents.getMeta(0).getKey() + " ");
+            //System.err.println(adComponents.getMeta(0).getValue());
+
+            context.write(NullWritable.get(), new Text(jsonObject.toString()));
         }
         tarOut.finish();
         tarOut.close();
         gzOut.close();
         bufferedOut.close();
+        out.close();
     }
 
     public byte[] getValidBytes(BytesWritable bw) {
