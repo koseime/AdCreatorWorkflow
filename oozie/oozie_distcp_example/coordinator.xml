@@ -1,0 +1,22 @@
+<coordinator-app name="pixel-coordinator" frequency="${coord:days(1)}" start="${startTime}" end="${endTime}" timezone="UTC" xmlns="uri:oozie:coordinator:0.1">
+	<controls>
+		<concurrency>${concurrencyLevel}</concurrency>
+	</controls>
+
+	<action>
+		<workflow>
+			<app-path>${workflowPath}</app-path>
+			<configuration>
+				<property>
+					<name>date</name>
+					<value>${coord:formatTime((coord:dateOffset(coord:nominalTime(), -1, 'DAY')), 'yyyy-MM-dd')}</value>
+				</property>
+				<property>
+					<name>cleanupDate</name>
+					<value>${coord:formatTime((coord:dateOffset(coord:nominalTime(), -32, 'DAY')), 'yyyy-MM-dd')}</value>
+				</property>
+			</configuration>
+		</workflow>
+	</action>    
+</coordinator-app>
+
