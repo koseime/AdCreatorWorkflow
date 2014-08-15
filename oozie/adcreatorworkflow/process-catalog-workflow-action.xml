@@ -7,6 +7,7 @@
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
+                <delete path="${customerRoot}/raw-catalog/${catalogFileName}"/>
                 <mkdir path="${customerRoot}/raw-catalog/"/>
             </prepare>
             <arg>-Dfs.s3n.awsAccessKeyId=${awsAccessKey}</arg>
