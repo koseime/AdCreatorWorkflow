@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow-app xmlns="uri:oozie:workflow:0.2" name="process-catalog-wf">
+    <start to="distcp-node"/>
+
+    <action name="distcp-node">
+        <distcp xmlns="uri:oozie:distcp-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <mkdir path="${customerRoot}/raw-catalog/"/>
+            </prepare>
+            <arg>-Dfs.s3n.awsAccessKeyId=${awsAccessKey}</arg>
+            <arg>-Dfs.s3n.awsSecretAccessKey=${awsSecretKey}</arg>
+            <arg>s3n://${bucketName}/${catalogFileName}</arg>
+            <arg>${customerRoot}/raw-catalog</arg>
+        </distcp>
+        <ok to="parse-catalog"/>
+        <error to="fail"/>
+    </action>
+
+    <action name='parse-catalog'>
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${parsedCatalogDir}"/>
+                <mkdir path="${processedCatalogRoot}/"/>
+            </prepare>
+
+            <configuration>
+                <property>
+                    <name>mapred.mapper.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.reducer.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.map.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.GoogleTextParserMapper</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.job.inputformat.class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.input.TextInputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.outputformat.class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.key.class</name>
+                    <value>org.apache.hadoop.io.NullWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.value.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${customerRoot}/raw-catalog/${catalogFileName}</value>
+                </property>
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${parsedCatalogDir}</value>
+                </property>
+
+            </configuration>
+        </map-reduce>
+        <ok to="crawl-catalog"/>
+        <error to="fail"/>
+    </action>
+
+    <action name='crawl-catalog'>
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${imageCatalogDir}"/>
+            </prepare>
+
+            <configuration>
+                <property>
+                    <name>mapred.mapper.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.reducer.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.map.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.ByteWritableImageCrawlerMapper</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.job.inputformat.class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.outputformat.class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.key.class</name>
+                    <value>org.apache.hadoop.io.NullWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.value.class</name>
+                    <value>org.apache.hadoop.io.BytesWritable</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${parsedCatalogDir}</value>
+                </property>
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${imageCatalogDir}</value>
+                </property>
+
+            </configuration>
+        </map-reduce>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+
+    <end name="end"/>
+
+</workflow-app>

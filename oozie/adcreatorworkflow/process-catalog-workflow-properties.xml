@@ -1,0 +1,151 @@
+<configuration>
+    <!-- Job information -->
+    <property>
+        <name>user.name</name>
+        <value>chantat</value>
+    </property>
+    <property>
+        <name>nameNode</name>
+        <value>hdfs://localhost:9000</value>
+    </property>
+    <property>
+        <name>jobTracker</name>
+        <value>localhost:8032</value>
+    </property>
+    <property>
+        <name>queueName</name>
+        <value>default</value>
+    </property>
+    <property>
+        <name>hdfsconfig</name>
+        <value>${nameNode}</value>
+    </property>
+
+    <!-- Workspace -->
+    <property>
+        <name>homeRoot</name>
+        <value>${nameNode}/user/chantat</value>
+    </property>
+    <property>
+        <name>workflowRoot</name>
+        <value>${homeRoot}/kosei/adcreator/oozie/adcreatorworkflow</value>
+    </property>
+    <property>
+        <name>catalogsRoot</name>
+        <value>${homeRoot}/catalogs</value>
+    </property>
+
+    <!-- Catalog information -->
+    <property>
+        <name>customerName</name>
+        <value>amazontest</value>
+    </property>
+    <property>
+        <name>DAY</name>
+        <value>15</value>
+    </property>
+    <property>
+        <name>MONTH</name>
+        <value>08</value>
+    </property>
+    <property>
+        <name>YEAR</name>
+        <value>2014</value>
+    </property>
+    <property>
+        <name>timeStamp</name>
+        <value>1407989823537</value>
+    </property>
+    <property>
+        <name>catalogName</name>
+        <value>google-input.txt</value>
+    </property>
+    <property>
+        <name>catalogFileName</name>
+        <value>${customerName}.${timeStamp}.${catalogName}</value>
+    </property>
+
+    <!-- AWS credentials -->
+    <property>
+        <name>awsAccessKey</name>
+        <value>AKIAJBUEAZ3FONWAW4QQ</value>
+    </property>
+    <property>
+        <name>awsSecretKey</name>
+        <value>vRy0uwV+I+Z0mVNqzWGEXCGrTKPQ5HTKx96JMn8b</value>
+    </property>
+    <property>
+        <name>bucketName</name>
+        <value>catalog-upload</value>
+    </property>
+
+
+
+
+
+
+    <!-- File Directories -->
+    <property>
+        <name>customerRoot</name>
+        <value>${catalogsRoot}/${customerName}</value>
+    </property>
+    <property>
+        <name>processedCatalogRoot</name>
+        <value>${customerRoot}/catalog/${YEAR}/${MONTH}/${DAY}</value>
+    </property>
+    <property>
+        <name>parsedCatalogDir</name>
+        <value>${processedCatalogRoot}/${catalogFileName}</value>
+    </property>
+    <property>
+        <name>imageCatalogDir</name>
+        <value>${processedCatalogRoot}/${catalogFileName}.images</value>
+    </property>
+
+
+    <!-- Workflow Properties -->
+    <property>
+        <name>oozie.use.system.libpath</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>oozie.wf.application.path</name>
+        <value>${workflowRoot}/process-catalog-workflow-action.xml</value>
+    </property>
+    <property>
+        <name>ooozie.wf.rerun.failnodes</name>
+        <value>true</value>
+    </property>
+
+    <!--
+    <property>
+        <name>tmp</name>
+        <value>/tmp/ad-creator-wf</value>
+    </property>
+    <property>
+        <name>inputDir</name>
+        <value>kosei/adcreator/input/catalog/amazon/2014/07/28/google-input.txt</value>
+    </property>
+    <property>
+        <name>outputDir</name>
+        <value>kosei/adcreator/output/catalog/amazon/catalog-20140728</value>
+    </property>
+    <property>
+        <name>outputCrawlDir</name>
+        <value>kosei/adcreator/output/catalog/amazon/catalog-images-20140728</value>
+    </property>
+    <property>
+        <name>outputImageProcessed</name>
+        <value>kosei/adcreator/output/catalog/amazon/catalog-images-processed-20140728</value>
+    </property>
+    <property>
+        <name>outputImageTar</name>
+        <value>hdfs://localhost:9000/user/chantat/kosei/adcreator/output/catalog/amazon/catalog-ads-20140728/img.tar</value>
+    </property>
+    <property>
+        <name>layoutResourceTar</name>
+        <value>layout_resource.tar.gz</value>
+    </property>
+-->
+</configuration>
+
