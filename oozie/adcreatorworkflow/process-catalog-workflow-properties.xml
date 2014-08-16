@@ -101,6 +101,10 @@
         <name>imageCatalogDir</name>
         <value>${processedCatalogRoot}/${catalogFileName}.images</value>
     </property>
+    <property>
+        <name>metaCatalogDir</name>
+        <value>${processedCatalogRoot}/${catalogFileName}.meta</value>
+    </property>
 
 
     <!-- Workflow Properties -->

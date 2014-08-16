@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * @author root
  */
 public class GoogleTextParserMapper extends
-        Mapper<LongWritable, Text, NullWritable, AdCreatorAssetsWritable> {
+        Mapper<LongWritable, Text, Text, AdCreatorAssetsWritable> {
 
     static enum ParserEnum { INPUTREC, SUCCESS }
 
@@ -33,17 +33,16 @@ public class GoogleTextParserMapper extends
             String productDesc = gpi.getTitle();
             String longProductDesc = gpi.getDescription();
             String price = gpi.getPrice();
-            String category = gpi.getGoogleProductCategory();
+            String category = cleanCategory(gpi.getGoogleProductCategory());
 
+            if (productId.isEmpty()) { return; }
             AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId, lowPicURI, thumbPicURI,
                     AdCreatorAssetsWritable.STATUS_RAW, null, productDesc, longProductDesc);
             ad.putMeta(new Text("price"), new BytesWritable(price.getBytes()));
             ad.putMeta(new Text("category"), new BytesWritable(category.getBytes()));
-            //System.err.print("price " + price + " ");
-            //System.err.println(new String(price.getBytes()));
-            //System.err.println(new String(category.getBytes()));
 
-            context.write(NullWritable.get(), ad);
+            context.write(new Text(""), ad);
+            context.write(new Text(ad.getId()), ad);
             context.getCounter(ParserEnum.SUCCESS).increment(1);
 
         } catch (IOException ex) {
@@ -52,6 +51,12 @@ public class GoogleTextParserMapper extends
             Logger.getLogger(GoogleTextParserMapper.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    private String cleanCategory(String category) {
+        category = category.replaceAll("&gt;", ":");
+        category = category.replaceAll("&amp;", "&");
+        return category;
     }
 
 }

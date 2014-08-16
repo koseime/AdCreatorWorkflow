@@ -45,10 +45,21 @@
                     <name>mapreduce.job.map.class</name>
                     <value>com.kosei.adcreatorworkflow.hadoop.GoogleTextParserMapper</value>
                 </property>
-
+                <property>
+                    <name>mapreduce.job.reduce.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.GoogleTextParserReducer</value>
+                </property>
                 <property>
                     <name>mapreduce.job.inputformat.class</name>
                     <value>org.apache.hadoop.mapreduce.lib.input.TextInputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.map.output.key.class</name>
+                    <value>org.apache.hadoop.io.Text</value>
+                </property>
+                <property>
+                    <name>mapreduce.map.output.value.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable</value>
                 </property>
                 <property>
                     <name>mapreduce.job.outputformat.class</name>
@@ -62,7 +73,6 @@
                     <name>mapreduce.job.output.value.class</name>
                     <value>com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable</value>
                 </property>
-
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${customerRoot}/raw-catalog/${catalogFileName}</value>
@@ -70,6 +80,10 @@
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
                     <value>${parsedCatalogDir}</value>
+                </property>
+                <property>
+                    <name>meta.output</name>
+                    <value>${metaCatalogDir}</value>
                 </property>
 
             </configuration>
