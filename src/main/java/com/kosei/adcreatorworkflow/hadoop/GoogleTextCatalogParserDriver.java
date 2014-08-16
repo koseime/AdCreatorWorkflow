@@ -10,6 +10,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 
+import javax.xml.soap.Text;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,8 +50,10 @@ public class GoogleTextCatalogParserDriver {
         FileInputFormat.setInputPaths(job, input);
         job.setJarByClass(GoogleTextCatalogParserDriver.class);
         job.setMapperClass(GoogleTextParserMapper.class);
-        job.setNumReduceTasks(0);
+        job.setReducerClass(GoogleTextParserReducer.class);
         job.setInputFormatClass(org.apache.hadoop.mapreduce.lib.input.TextInputFormat.class);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(AdCreatorAssetsWritable.class);
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
         job.setOutputKeyClass(NullWritable.class);
         job.setOutputValueClass(AdCreatorAssetsWritable.class);
