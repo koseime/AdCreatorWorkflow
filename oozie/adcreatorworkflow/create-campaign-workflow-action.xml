@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow-app xmlns="uri:oozie:workflow:0.2" name="create-campaign-wf">
+    <start to="ad-create"/>
+
+    <action name='ad-create'>
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${adsDir}"/>
+                <mkdir path="${currentCampaignRoot}"/>
+            </prepare>
+            <pipes>
+                <inputformat>org.apache.hadoop.mapred.SequenceFileInputFormat</inputformat>
+                <writer>org.apache.hadoop.mapred.SequenceFileOutputFormat</writer>
+                <program>bin/ad-creator#ad-creator</program>
+            </pipes>
+
+            <configuration>
+                <property>
+                    <name>mapred.input.dir</name>
+                    <value>${imageCatalogDir}</value>
+                </property>
+                <property>
+                    <name>mapred.output.dir</name>
+                    <value>${adsDir}</value>
+                </property>
+                <property>
+                    <name>mapred.reduce.tasks</name>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>hadoop.pipes.java.recordreader</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>hadoop.pipes.java.recordwriter</name>
+                    <value>true</value>
+                </property>
+
+                <property>
+                    <name>layout.resource.tar</name>
+                    <value>layout_resource.tar.gz</value>
+                </property>
+            </configuration>
+
+            <file>${resourcesDir}/layout_resource.tar.gz</file>
+            <file>${fontsDir}</file>
+
+        </map-reduce>
+        <ok to="parse-pipes-output"/>
+        <error to="fail"/>
+    </action>
+
+    <action name='parse-pipes-output'>
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${currentCampaignRoot}/tmp"/>
+            </prepare>
+
+            <configuration>
+                <property>
+                    <name>mapred.mapper.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.reducer.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.map.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.PipesOutputParserMapper</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.reduce.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.PipesOutputParserReducer</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.job.inputformat.class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.map.output.key.class</name>
+                    <value>org.apache.hadoop.io.NullWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.map.output.value.class</name>
+                    <value>org.apache.hadoop.io.BytesWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.outputformat.class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.output.TextOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.key.class</name>
+                    <value>org.apache.hadoop.io.NullWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.value.class</name>
+                    <value>org.apache.hadoop.io.Text</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${adsDir}</value>
+                </property>
+                <property>
+                    <name>tar.output</name>
+                    <value>${adsTarDir}</value>
+                </property>
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${currentCampaignRoot}/tmp</value>
+                </property>
+
+            </configuration>
+        </map-reduce>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+
+    <kill name="fail">
+    <message>Failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+
+    <end name="end"/>
+
+</workflow-app>

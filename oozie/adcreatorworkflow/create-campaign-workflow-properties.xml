@@ -21,7 +21,6 @@
         <value>${nameNode}</value>
     </property>
 
-
     <!-- Workspace -->
     <property>
         <name>homeRoot</name>
@@ -32,10 +31,13 @@
         <value>${homeRoot}/kosei/adcreator/oozie/adcreatorworkflow</value>
     </property>
     <property>
-        <name>catalogsRoot</name>
+        <name>workingRoot</name>
         <value>${homeRoot}/catalogs</value>
     </property>
-
+    <property>
+        <name>fontsDir</name>
+        <value>${homeRoot}/fonts</value>
+    </property>
 
     <!-- Catalog information -->
     <property>
@@ -67,6 +69,20 @@
         <value>${customerName}.${timeStamp}.${catalogName}</value>
     </property>
 
+    <!-- Campaign information -->
+    <property>
+        <name>campaignId</name>
+        <value>campaign1</value>
+    </property>
+    <property>
+        <name>campaignDirName</name>
+        <value>${customerName}.${campaignId}.${timeStamp}</value>
+    </property>
+    <property>
+        <name>campaignTarName</name>
+        <value>${customerName}.${campaignId}.${timeStamp}.tar.gz</value>
+    </property>
+
 
     <!-- AWS credentials -->
     <property>
@@ -86,23 +102,36 @@
     <!-- File Directories -->
     <property>
         <name>customerRoot</name>
-        <value>${catalogsRoot}/${customerName}</value>
+        <value>${workingRoot}/${customerName}</value>
     </property>
     <property>
         <name>processedCatalogRoot</name>
         <value>${customerRoot}/catalog/${YEAR}/${MONTH}/${DAY}</value>
     </property>
     <property>
-        <name>parsedCatalogDir</name>
-        <value>${processedCatalogRoot}/${catalogFileName}</value>
-    </property>
-    <property>
         <name>imageCatalogDir</name>
         <value>${processedCatalogRoot}/${catalogFileName}.images</value>
     </property>
+
     <property>
-        <name>metaCatalogDir</name>
-        <value>${processedCatalogRoot}/${catalogFileName}.meta</value>
+        <name>campaignRoot</name>
+        <value>${customerRoot}/${campaignId}</value>
+    </property>
+    <property>
+        <name>currentCampaignRoot</name>
+        <value>${campaignRoot}/${YEAR}/${MONTH}/${DAY}</value>
+    </property>
+    <property>
+        <name>adsDir</name>
+        <value>${currentCampaignRoot}/${campaignDirName}</value>
+    </property>
+    <property>
+        <name>adsTarDir</name>
+        <value>${currentCampaignRoot}/${campaignTarName}</value>
+    </property>
+    <property>
+        <name>resourcesDir</name>
+        <value>${campaignRoot}/resources</value>
     </property>
 
 
@@ -113,11 +142,12 @@
     </property>
     <property>
         <name>oozie.wf.application.path</name>
-        <value>${workflowRoot}/process-catalog-workflow-action.xml</value>
+        <value>${workflowRoot}/create-campaign-workflow-action.xml</value>
     </property>
     <property>
         <name>ooozie.wf.rerun.failnodes</name>
         <value>true</value>
     </property>
+
 </configuration>
 
