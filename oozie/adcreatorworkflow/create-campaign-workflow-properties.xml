@@ -45,15 +45,15 @@
         <value>amazontest</value>
     </property>
     <property>
-        <name>DAY</name>
-        <value>15</value>
+        <name>day</name>
+        <value>18</value>
     </property>
     <property>
-        <name>MONTH</name>
+        <name>month</name>
         <value>08</value>
     </property>
     <property>
-        <name>YEAR</name>
+        <name>year</name>
         <value>2014</value>
     </property>
     <property>
@@ -105,12 +105,8 @@
         <value>${workingRoot}/${customerName}</value>
     </property>
     <property>
-        <name>processedCatalogRoot</name>
-        <value>${customerRoot}/catalog/${YEAR}/${MONTH}/${DAY}</value>
-    </property>
-    <property>
         <name>imageCatalogDir</name>
-        <value>${processedCatalogRoot}/${catalogFileName}.images</value>
+        <value>${customerRoot}/catalog/2014/08/15/${catalogFileName}.images</value>
     </property>
 
     <property>
@@ -119,7 +115,7 @@
     </property>
     <property>
         <name>currentCampaignRoot</name>
-        <value>${campaignRoot}/${YEAR}/${MONTH}/${DAY}</value>
+        <value>${campaignRoot}/${year}/${month}/${day}</value>
     </property>
     <property>
         <name>adsDir</name>
@@ -141,13 +137,12 @@
         <value>true</value>
     </property>
     <property>
-        <name>oozie.wf.application.path</name>
-        <value>${workflowRoot}/create-campaign-workflow-action.xml</value>
+        <name>oozie.coord.application.path</name>
+        <value>${workflowRoot}/create-campaign-workflow-coordinator.xml</value>
     </property>
     <property>
         <name>ooozie.wf.rerun.failnodes</name>
         <value>true</value>
     </property>
-
 </configuration>
 

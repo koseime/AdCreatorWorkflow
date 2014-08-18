@@ -1,0 +1,19 @@
+<coordinator-app name="test" frequency="1440" start="${year}-${month}-${day}T00:00Z" end="${year}-${month}-${day}T23:59Z" timezone="PST" xmlns="uri:oozie:coordinator:0.1">
+    <datasets>
+        <dataset name="input" frequency="1" initial-instance="${year}-${month}-${day}T00:00Z" timezone="PST">
+            <uri-template>${imageCatalogDir}</uri-template>
+            <done-flag>_SUCCESS</done-flag>
+        </dataset>
+    </datasets>
+    <input-events>
+        <data-in name="trigger" dataset="input">
+            <instance>${coord:current(0)}</instance>
+        </data-in>
+    </input-events>
+
+    <action>
+        <workflow>
+            <app-path>${workflowRoot}/create-campaign-workflow-action.xml</app-path>
+        </workflow>
+    </action>
+</coordinator-app>
