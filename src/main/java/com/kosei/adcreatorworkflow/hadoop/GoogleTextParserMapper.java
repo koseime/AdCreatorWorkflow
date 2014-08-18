@@ -54,7 +54,7 @@ public class GoogleTextParserMapper extends
     }
 
     private String cleanCategory(String category) {
-        category = category.replaceAll("&gt;", ":");
+        category = category.replaceAll("(\\s*)&gt;(\\s*)", ":");
         category = category.replaceAll("&amp;", "&");
         return category;
     }
