@@ -62,7 +62,6 @@ public class PipesOutputParserReducer extends
                 }
                 productIdImageNameListStringBuilder.append(file_name);
             }
-            productIdImageNameListStringBuilder.append('\n');
             context.write(NullWritable.get(), new Text(productIdImageNameListStringBuilder.toString()));
         }
         tarOut.finish();
