@@ -42,6 +42,7 @@ public class PipesOutputParserReducer extends
         for (BytesWritable value : values) {
             AdComponents adComponents = AdComponents.parseFrom(getValidBytes(value));
 
+            StringBuilder productIdImageNameListStringBuilder = new StringBuilder(adComponents.getId());
             for (int i = 0; i < adComponents.getGeneratedAdsCount(); i++) {
                 AdComponents.Ad ad = adComponents.getGeneratedAds(i);
                 String file_name = adComponents.getId() + "_" + ad.getLayoutName() + ".jpg";
@@ -53,19 +54,16 @@ public class PipesOutputParserReducer extends
                 IOUtils.copy(imageStream, tarOut);
                 imageStream.close();
                 tarOut.closeArchiveEntry();
-            }
 
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", adComponents.getId());
-            for (int i = 0; i < adComponents.getMetaCount(); i++) {
-                AdComponents.Meta metaEntry = adComponents.getMeta(i);
-                // TODO: ask Lance what format should be output
-                jsonObject.put(metaEntry.getKey(), new String(metaEntry.getValue().toByteArray()));
+                if (i == 0) {
+                    productIdImageNameListStringBuilder.append('=');
+                } else {
+                    productIdImageNameListStringBuilder.append(',');
+                }
+                productIdImageNameListStringBuilder.append(file_name);
             }
-            //System.err.print(adComponents.getMeta(0).getKey() + " ");
-            //System.err.println(adComponents.getMeta(0).getValue());
-
-            context.write(NullWritable.get(), new Text(jsonObject.toString()));
+            productIdImageNameListStringBuilder.append('\n');
+            context.write(NullWritable.get(), new Text(productIdImageNameListStringBuilder.toString()));
         }
         tarOut.finish();
         tarOut.close();
