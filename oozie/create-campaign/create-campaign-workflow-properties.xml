@@ -28,10 +28,10 @@
     </property>
     <property>
         <name>workflowRoot</name>
-        <value>${homeRoot}/kosei/adcreator/oozie/adcreatorworkflow</value>
+        <value>${homeRoot}/kosei/adcreator/oozie/create-campaign</value>
     </property>
     <property>
-        <name>workingRoot</name>
+        <name>advertisersRoot</name>
         <value>${homeRoot}/catalogs</value>
     </property>
     <property>
@@ -41,7 +41,7 @@
 
     <!-- Catalog information -->
     <property>
-        <name>customerName</name>
+        <name>advertiserName</name>
         <value>amazontest</value>
     </property>
     <property>
@@ -66,7 +66,7 @@
     </property>
     <property>
         <name>catalogFileName</name>
-        <value>${customerName}.${timeStamp}.${catalogName}</value>
+        <value>${advertiserName}.${timeStamp}.${catalogName}</value>
     </property>
 
     <!-- Campaign information -->
@@ -76,11 +76,15 @@
     </property>
     <property>
         <name>campaignDirName</name>
-        <value>${customerName}.${campaignId}.${timeStamp}</value>
+        <value>${advertiserName}.${campaignId}.${timeStamp}</value>
     </property>
     <property>
         <name>campaignTarName</name>
-        <value>${customerName}.${campaignId}.${timeStamp}.tar.gz</value>
+        <value>${advertiserName}.${campaignId}.${timeStamp}.tar.gz</value>
+    </property>
+    <property>
+        <name>campaignMetaName</name>
+        <value>${advertiserName}.${campaignId}.${timeStamp}.meta</value>
     </property>
 
 
@@ -101,33 +105,33 @@
 
     <!-- File Directories -->
     <property>
-        <name>customerRoot</name>
-        <value>${workingRoot}/${customerName}</value>
+        <name>advertiserRoot</name>
+        <value>${advertisersRoot}/${advertiserName}</value>
     </property>
     <property>
         <name>imageCatalogDir</name>
-        <value>${customerRoot}/catalog/2014/08/15/${catalogFileName}.images</value>
+        <value>${advertiserRoot}/catalog/2014/08/15/${catalogFileName}.images</value>
     </property>
 
     <property>
         <name>campaignRoot</name>
-        <value>${customerRoot}/${campaignId}</value>
+        <value>${advertiserRoot}/${campaignId}/${year}/${month}/${day}</value>
     </property>
     <property>
-        <name>currentCampaignRoot</name>
-        <value>${campaignRoot}/${year}/${month}/${day}</value>
+        <name>campaignImageDir</name>
+        <value>${campaignRoot}/${campaignDirName}</value>
     </property>
     <property>
-        <name>adsDir</name>
-        <value>${currentCampaignRoot}/${campaignDirName}</value>
+        <name>campaignTarDir</name>
+        <value>${campaignRoot}/${campaignTarName}</value>
     </property>
     <property>
-        <name>adsTarDir</name>
-        <value>${currentCampaignRoot}/${campaignTarName}</value>
+        <name>campaignMetaDir</name>
+        <value>${campaignRoot}/${campaignMetaName}</value>
     </property>
     <property>
         <name>resourcesDir</name>
-        <value>${campaignRoot}/resources</value>
+        <value>${advertiserRoot}/${campaignId}/resources</value>
     </property>
 
 
@@ -138,7 +142,7 @@
     </property>
     <property>
         <name>oozie.coord.application.path</name>
-        <value>${workflowRoot}/create-campaign-workflow-coordinator.xml</value>
+        <value>${workflowRoot}/coordinator.xml</value>
     </property>
     <property>
         <name>ooozie.wf.rerun.failnodes</name>

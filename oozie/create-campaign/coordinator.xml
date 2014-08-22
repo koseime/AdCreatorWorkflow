@@ -13,7 +13,7 @@
 
     <action>
         <workflow>
-            <app-path>${workflowRoot}/create-campaign-workflow-action.xml</app-path>
+            <app-path>${workflowRoot}/workflow.xml</app-path>
         </workflow>
     </action>
 </coordinator-app>
