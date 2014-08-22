@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow-app xmlns="uri:oozie:workflow:0.2" name="process-catalog-wf">
-    <start to="parse-catalog"/>
+    <start to="distcp-node"/>
 
     <action name="distcp-node">
         <distcp xmlns="uri:oozie:distcp-action:0.1">
@@ -146,6 +146,27 @@
 
             </configuration>
         </map-reduce>
+        <ok to="upload-catalog-meta"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="upload-catalog-meta">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <main-class>com.kosei.dropwizard.management.UploadCatalogMeta</main-class>
+            <arg>http://localhost:8080</arg>
+            <arg>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</arg>
+            <arg>${advertiserId}</arg>
+            <arg>${catalogId}</arg>
+            <arg>${metaCatalogDir}</arg>
+        </java>
         <ok to="end"/>
         <error to="fail"/>
     </action>

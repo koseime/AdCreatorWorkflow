@@ -39,6 +39,14 @@
 
     <!-- Catalog information -->
     <property>
+        <name>advertiserId</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>catalogId</name>
+        <value>1</value>
+    </property>
+    <property>
         <name>advertiserName</name>
         <value>amazontest</value>
     </property>
