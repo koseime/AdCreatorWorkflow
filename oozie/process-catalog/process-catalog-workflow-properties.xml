@@ -29,17 +29,17 @@
     </property>
     <property>
         <name>workflowRoot</name>
-        <value>${homeRoot}/kosei/adcreator/oozie/adcreatorworkflow</value>
+        <value>${homeRoot}/kosei/adcreator/oozie/process-catalog</value>
     </property>
     <property>
-        <name>catalogsRoot</name>
+        <name>advertisersRoot</name>
         <value>${homeRoot}/catalogs</value>
     </property>
 
 
     <!-- Catalog information -->
     <property>
-        <name>customerName</name>
+        <name>advertiserName</name>
         <value>amazontest</value>
     </property>
     <property>
@@ -64,7 +64,7 @@
     </property>
     <property>
         <name>catalogFileName</name>
-        <value>${customerName}.${timeStamp}.${catalogName}</value>
+        <value>${advertiserName}.${timeStamp}.${catalogName}</value>
     </property>
 
 
@@ -85,12 +85,12 @@
 
     <!-- File Directories -->
     <property>
-        <name>customerRoot</name>
-        <value>${catalogsRoot}/${customerName}</value>
+        <name>advertiserRoot</name>
+        <value>${advertisersRoot}/${advertiserName}</value>
     </property>
     <property>
         <name>processedCatalogRoot</name>
-        <value>${customerRoot}/catalog/${YEAR}/${MONTH}/${DAY}</value>
+        <value>${advertiserRoot}/catalog/${YEAR}/${MONTH}/${DAY}</value>
     </property>
     <property>
         <name>parsedCatalogDir</name>
@@ -113,7 +113,7 @@
     </property>
     <property>
         <name>oozie.wf.application.path</name>
-        <value>${workflowRoot}/process-catalog-workflow-action.xml</value>
+        <value>${workflowRoot}/workflow.xml</value>
     </property>
     <property>
         <name>ooozie.wf.rerun.failnodes</name>
