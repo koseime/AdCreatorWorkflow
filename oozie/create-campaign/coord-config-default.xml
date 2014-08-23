@@ -24,7 +24,7 @@
     </property>
     <property>
         <name>workflowRoot</name>
-        <value>hdfs://localhost:9000/user/chantat/kosei/adcreator/oozie/process-catalog</value>
+        <value>hdfs://localhost:9000/user/chantat/kosei/adcreator/oozie/create-campaign</value>
     </property>
     <property>
         <name>advertisersRoot</name>
@@ -40,4 +40,10 @@
         <name>ooozie.wf.rerun.failnodes</name>
         <value>true</value>
     </property>
+
+    <property>
+        <name>fontsDir</name>
+        <value>hdfs://localhost:9000/user/chantat/fonts</value>
+    </property>
+
 </configuration>

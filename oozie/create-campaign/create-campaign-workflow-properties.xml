@@ -32,7 +32,7 @@
     </property>
     <property>
         <name>advertisersRoot</name>
-        <value>${homeRoot}/catalogs</value>
+        <value>${homeRoot}/advertisers</value>
     </property>
     <property>
         <name>fontsDir</name>
@@ -131,7 +131,7 @@
     </property>
     <property>
         <name>resourcesDir</name>
-        <value>${advertiserRoot}/${campaignId}/resources</value>
+        <value>${advertiserRoot}/campaign/${campaignId}/resources</value>
     </property>
 
 

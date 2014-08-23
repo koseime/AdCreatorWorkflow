@@ -7,8 +7,8 @@
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
-                <delete path="${adsDir}"/>
-                <mkdir path="${currentCampaignRoot}"/>
+                <delete path="${campaignImageDir}"/>
+                <mkdir path="${campaignRoot}"/>
             </prepare>
             <pipes>
                 <inputformat>org.apache.hadoop.mapred.SequenceFileInputFormat</inputformat>
@@ -23,7 +23,7 @@
                 </property>
                 <property>
                     <name>mapred.output.dir</name>
-                    <value>${adsDir}</value>
+                    <value>${campaignImageDir}</value>
                 </property>
                 <property>
                     <name>mapred.reduce.tasks</name>
@@ -57,7 +57,7 @@
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
-                <delete path="${currentCampaignRoot}/tmp"/>
+                <delete path="${campaignMetaDir}"/>
             </prepare>
 
             <configuration>
@@ -109,23 +109,43 @@
 
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${adsDir}</value>
+                    <value>${campaignImageDir}</value>
                 </property>
                 <property>
                     <name>tar.output</name>
-                    <value>${adsTarDir}</value>
+                    <value>${campaignTarDir}</value>
                 </property>
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${currentCampaignRoot}/tmp</value>
+                    <value>${campaignMetaDir}</value>
                 </property>
 
             </configuration>
         </map-reduce>
-        <ok to="end"/>
+        <ok to="upload-campaign-meta"/>
         <error to="fail"/>
     </action>
 
+    <action name="upload-campaign-meta">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <main-class>com.kosei.dropwizard.management.UploadCampaignMeta</main-class>
+            <arg>http://localhost:8080</arg>
+            <arg>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</arg>
+            <arg>${advertiserId}</arg>
+            <arg>${catalogId}</arg>
+            <arg>${campaignMetaDir}/part-r-00000</arg>
+        </java>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
 
     <kill name="fail">
     <message>Failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
