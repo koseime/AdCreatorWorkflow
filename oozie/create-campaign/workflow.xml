@@ -139,8 +139,8 @@
             <main-class>com.kosei.dropwizard.management.UploadCampaignMeta</main-class>
             <arg>http://localhost:8080</arg>
             <arg>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</arg>
-            <arg>${advertiserId}</arg>
-            <arg>${catalogId}</arg>
+            <arg>${advertiserName}</arg>
+            <arg>${campaignId}</arg>
             <arg>${campaignMetaDir}/part-r-00000</arg>
         </java>
         <ok to="end"/>
