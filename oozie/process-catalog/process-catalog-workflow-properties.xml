@@ -39,12 +39,8 @@
 
     <!-- Catalog information -->
     <property>
-        <name>advertiserId</name>
-        <value>1</value>
-    </property>
-    <property>
         <name>catalogId</name>
-        <value>1</value>
+        <value>amazontest-12345-1</value>
     </property>
     <property>
         <name>advertiserName</name>
@@ -62,18 +58,6 @@
         <name>YEAR</name>
         <value>2014</value>
     </property>
-    <property>
-        <name>timeStamp</name>
-        <value>1407989823537</value>
-    </property>
-    <property>
-        <name>catalogName</name>
-        <value>google-input.txt</value>
-    </property>
-    <property>
-        <name>catalogFileName</name>
-        <value>${advertiserName}.${timeStamp}.${catalogName}</value>
-    </property>
 
 
     <!-- AWS credentials -->
@@ -87,7 +71,7 @@
     </property>
     <property>
         <name>bucketName</name>
-        <value>catalog-upload</value>
+        <value>catalog-test</value>
     </property>
 
 
@@ -102,15 +86,15 @@
     </property>
     <property>
         <name>parsedCatalogDir</name>
-        <value>${processedCatalogRoot}/${catalogFileName}</value>
+        <value>${processedCatalogRoot}/${catalogId}</value>
     </property>
     <property>
         <name>imageCatalogDir</name>
-        <value>${processedCatalogRoot}/${catalogFileName}.images</value>
+        <value>${processedCatalogRoot}/${catalogId}.images</value>
     </property>
     <property>
         <name>metaCatalogDir</name>
-        <value>${processedCatalogRoot}/${catalogFileName}.meta</value>
+        <value>${processedCatalogRoot}/${catalogId}.meta</value>
     </property>
 
 
