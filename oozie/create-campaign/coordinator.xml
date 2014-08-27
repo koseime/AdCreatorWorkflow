@@ -1,4 +1,7 @@
 <coordinator-app name="test" frequency="1440" start="${startCoordDate}" end="${endCoordDate}" timezone="GMT" xmlns="uri:oozie:coordinator:0.1">
+    <controls>
+        <timeout>60</timeout>
+    </controls>
     <datasets>
         <dataset name="input" frequency="1" initial-instance="${startCoordDate}" timezone="GMT">
             <uri-template>${imageCatalogDir}</uri-template>
