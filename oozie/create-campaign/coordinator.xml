@@ -1,6 +1,6 @@
-<coordinator-app name="test" frequency="1440" start="2014-08-22T00:00Z" end="2014-08-22T23:59Z" timezone="PST" xmlns="uri:oozie:coordinator:0.1">
+<coordinator-app name="test" frequency="1440" start="${startCoordDate}" end="${endCoordDate}" timezone="GMT" xmlns="uri:oozie:coordinator:0.1">
     <datasets>
-        <dataset name="input" frequency="1" initial-instance="2014-08-22T00:00Z" timezone="PST">
+        <dataset name="input" frequency="1" initial-instance="${startCoordDate}" timezone="GMT">
             <uri-template>${imageCatalogDir}</uri-template>
             <done-flag>_SUCCESS</done-flag>
         </dataset>
