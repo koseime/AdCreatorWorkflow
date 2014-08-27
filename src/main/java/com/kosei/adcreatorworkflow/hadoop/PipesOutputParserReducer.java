@@ -43,29 +43,36 @@ public class PipesOutputParserReducer extends
             AdComponents adComponents = AdComponents.parseFrom(getValidBytes(value));
 
             StringBuilder productIdImageNameListStringBuilder = new StringBuilder(adComponents.getId());
-            for (int i = 0; i < adComponents.getGeneratedAdsCount(); i++) {
-                AdComponents.Ad ad = adComponents.getGeneratedAds(i);
-                String file_name = adComponents.getId() + "_" + ad.getLayoutName() + ".jpg";
-                TarArchiveEntry tarEntry = new TarArchiveEntry(file_name);
-                tarEntry.setSize(ad.getAdJpg().size());
-                tarOut.putArchiveEntry(tarEntry);
+            if (!isDeleted(adComponents)) {
+                for (int i = 0; i < adComponents.getGeneratedAdsCount(); i++) {
+                    AdComponents.Ad ad = adComponents.getGeneratedAds(i);
+                    String file_name = adComponents.getId() + "_" + ad.getLayoutName() + ".jpg";
+                    TarArchiveEntry tarEntry = new TarArchiveEntry(file_name);
+                    tarEntry.setSize(ad.getAdJpg().size());
+                    tarOut.putArchiveEntry(tarEntry);
 
-                ByteArrayInputStream imageStream = new ByteArrayInputStream(ad.getAdJpg().toByteArray());
-                IOUtils.copy(imageStream, tarOut);
-                imageStream.close();
-                tarOut.closeArchiveEntry();
+                    ByteArrayInputStream imageStream = new ByteArrayInputStream(ad.getAdJpg().toByteArray());
+                    IOUtils.copy(imageStream, tarOut);
+                    imageStream.close();
+                    tarOut.closeArchiveEntry();
 
-                if (i == 0) {
-                    productIdImageNameListStringBuilder.append('=');
-                } else {
-                    productIdImageNameListStringBuilder.append(',');
+                    if (i == 0) {
+                        productIdImageNameListStringBuilder.append('=');
+                    } else {
+                        productIdImageNameListStringBuilder.append(',');
+                    }
+                    productIdImageNameListStringBuilder.append(file_name);
                 }
-                productIdImageNameListStringBuilder.append(file_name);
+            } else {
+                productIdImageNameListStringBuilder.append("=DELETED");
             }
+
             context.write(NullWritable.get(), new Text(productIdImageNameListStringBuilder.toString()));
         }
         tarOut.finish();
         tarOut.close();
+
+        // TODO: remove these?
         gzOut.close();
         bufferedOut.close();
         out.close();
@@ -73,6 +80,16 @@ public class PipesOutputParserReducer extends
 
     public byte[] getValidBytes(BytesWritable bw) {
         return Arrays.copyOf(bw.getBytes(), bw.getLength());
+    }
+
+    private boolean isDeleted(AdComponents adComponents) {
+        for (int i = 0; i < adComponents.getMetaCount(); i++) {
+            AdComponents.Meta metaEntry = adComponents.getMeta(i);
+            if (metaEntry.getKey().equals("deleted")) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

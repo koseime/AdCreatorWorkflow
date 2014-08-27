@@ -5,6 +5,7 @@ import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,6 +22,10 @@ public class GoogleTextParserMapper extends
     public void map(LongWritable key, Text value1,Context context)
             throws IOException, InterruptedException {
 
+        String timestampString = context.getConfiguration().get("timestamp");
+        long timestamp = Long.parseLong(timestampString);
+        byte[] timestampBytes = ByteBuffer.allocate(8).putLong(timestamp).array();
+
         String googleCatRecord = value1.toString();
         context.getCounter(ParserEnum.INPUTREC).increment(1);
 
@@ -32,14 +37,13 @@ public class GoogleTextParserMapper extends
             String thumbPicURI =gpi.getAdditionalImageLink();
             String productDesc = gpi.getTitle();
             String longProductDesc = gpi.getDescription();
-            String price = gpi.getPrice();
             String category = cleanCategory(gpi.getGoogleProductCategory());
 
             if (productId.isEmpty()) { return; }
             AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId, lowPicURI, thumbPicURI,
                     AdCreatorAssetsWritable.STATUS_RAW, null, productDesc, longProductDesc);
-            ad.putMeta(new Text("price"), new BytesWritable(price.getBytes()));
             ad.putMeta(new Text("category"), new BytesWritable(category.getBytes()));
+            ad.putMeta(new Text("timestamp"), new BytesWritable(timestampBytes));
 
             context.write(new Text(""), ad);
             context.write(new Text(ad.getId()), ad);
@@ -54,7 +58,7 @@ public class GoogleTextParserMapper extends
     }
 
     private String cleanCategory(String category) {
-        category = category.replaceAll("(\\s*)&gt;(\\s*)", ":");
+        category = category.replaceAll("(\\s*)&gt;(\\s*)", ">");
         category = category.replaceAll("&amp;", "&");
         return category;
     }

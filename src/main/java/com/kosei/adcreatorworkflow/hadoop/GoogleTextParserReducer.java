@@ -8,6 +8,7 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,13 +32,14 @@ public class GoogleTextParserReducer extends
             if (hdfs.exists(file)) { hdfs.delete(file, true); }
 
             FSDataOutputStream out = hdfs.create(file);
+            BufferedOutputStream bufferedOut = new BufferedOutputStream(out);
             for (AdCreatorAssetsWritable value : values) {
                 byte[] categoryBytes = value.getMeta(new Text("category")).copyBytes();
                 String line = value.getId() + "=" + new String(categoryBytes) + "\n";
-                out.write(line.getBytes());
+                bufferedOut.write(line.getBytes());
             }
 
-            out.close();
+            bufferedOut.close();
         } else {
             boolean isFirst = true;
             for (AdCreatorAssetsWritable value : values) {
