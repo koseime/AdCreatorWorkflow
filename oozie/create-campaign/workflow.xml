@@ -122,6 +122,19 @@
 
             </configuration>
         </map-reduce>
+        <ok to="upload-to-S3"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="upload-to-S3">
+        <distcp xmlns="uri:oozie:distcp-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <arg>-Dfs.s3n.awsAccessKeyId=${awsAccessKey}</arg>
+            <arg>-Dfs.s3n.awsSecretAccessKey=${awsSecretKey}</arg>
+            <arg>${campaignTarDir}</arg>
+            <arg>s3n://${bucketName}/${campaignId}.tar.gz</arg>
+        </distcp>
         <ok to="upload-campaign-meta"/>
         <error to="fail"/>
     </action>
