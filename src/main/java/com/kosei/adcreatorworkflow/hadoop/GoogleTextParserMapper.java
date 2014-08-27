@@ -38,12 +38,16 @@ public class GoogleTextParserMapper extends
             String productDesc = gpi.getTitle();
             String longProductDesc = gpi.getDescription();
             String category = cleanCategory(gpi.getGoogleProductCategory());
+            String availability = gpi.getAvailability();
 
             if (productId.isEmpty()) { return; }
             AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId, lowPicURI, thumbPicURI,
                     AdCreatorAssetsWritable.STATUS_RAW, null, productDesc, longProductDesc);
             ad.putMeta(new Text("category"), new BytesWritable(category.getBytes()));
             ad.putMeta(new Text("timestamp"), new BytesWritable(timestampBytes));
+            if (availability.equals("out of stock")) {
+                ad.putMeta(new Text("deleted"), new BytesWritable(availability.getBytes()));
+            }
 
             context.write(new Text(""), ad);
             context.write(new Text(ad.getId()), ad);
