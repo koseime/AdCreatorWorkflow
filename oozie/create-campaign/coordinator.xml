@@ -4,7 +4,7 @@
     </controls>
     <datasets>
         <dataset name="input" frequency="1" initial-instance="${startCoordDate}" timezone="GMT">
-            <uri-template>${imageCatalogDir}</uri-template>
+            <uri-template>${advertisersRoot}/${imageCatalogDir}</uri-template>
             <done-flag>_SUCCESS</done-flag>
         </dataset>
     </datasets>
