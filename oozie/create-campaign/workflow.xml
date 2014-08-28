@@ -7,7 +7,7 @@
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
-                <delete path="${advertisersRoot}/${imageCatalogDir}"/>
+                <delete path="${compactedCatalogDir}"/>
             </prepare>
 
             <configuration>
