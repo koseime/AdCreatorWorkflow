@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow-app xmlns="uri:oozie:workflow:0.2" name="create-campaign-wf">
-    <start to="ad-create"/>
+    <start to="catalog-compactor"/>
 
     <action name='catalog-compactor'>
         <map-reduce>
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
-                <delete path="${imageCatalogDir}"/>
+                <delete path="${advertisersRoot}/${imageCatalogDir}"/>
             </prepare>
 
             <configuration>
@@ -59,7 +59,7 @@
 
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${imageCatalogDir}</value>
+                    <value>${advertisersRoot}/${imageCatalogDir}</value>
                 </property>
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
