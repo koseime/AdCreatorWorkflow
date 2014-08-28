@@ -22,7 +22,7 @@ public class GoogleTextParserMapper extends
     public void map(LongWritable key, Text value1,Context context)
             throws IOException, InterruptedException {
 
-        String timestampString = context.getConfiguration().get("timestamp");
+        String timestampString = context.getConfiguration().get("catalog.timestamp");
         long timestamp = Long.parseLong(timestampString);
         byte[] timestampBytes = ByteBuffer.allocate(8).putLong(timestamp).array();
 

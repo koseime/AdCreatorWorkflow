@@ -82,6 +82,10 @@
                     <value>${parsedCatalogDir}</value>
                 </property>
                 <property>
+                    <name>catalog.timestamp</name>
+                    <value>${timestamp}</value>
+                </property>
+                <property>
                     <name>meta.output</name>
                     <value>${metaCatalogDir}</value>
                 </property>
