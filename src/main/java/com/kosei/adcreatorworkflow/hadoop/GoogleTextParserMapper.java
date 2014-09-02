@@ -4,7 +4,8 @@ import com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Mapper;
 
-import java.io.IOException;
+import javax.ws.rs.core.Context;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,23 +19,38 @@ public class GoogleTextParserMapper extends
 
     static enum ParserEnum { INPUTREC, SUCCESS }
 
+    private String catalogHeader = "";
+    private GoogleProductItemParser googleProductItemParser = null;
+    private byte[] timestampBytes = null;
+
     @Override
-    public void map(LongWritable key, Text value1,Context context)
-            throws IOException, InterruptedException {
+    public void setup(Context context) {
+        String catalogHeaderFilePath = context.getConfiguration().get("catalog.header.file");
+        try {
+            catalogHeader = getCatalogHeader(catalogHeaderFilePath);
+        } catch (Exception e) {
+            Logger.getLogger(GoogleTextParserMapper.class.getName()).log(Level.SEVERE, null, e);
+        }
+        googleProductItemParser = new GoogleProductItemParser(catalogHeader);
 
         String timestampString = context.getConfiguration().get("catalog.timestamp");
         long timestamp = Long.parseLong(timestampString);
-        byte[] timestampBytes = ByteBuffer.allocate(8).putLong(timestamp).array();
+        timestampBytes = ByteBuffer.allocate(8).putLong(timestamp).array();
+    }
 
+    @Override
+    public void map(LongWritable key, Text value1, Context context)
+            throws IOException, InterruptedException {
         String googleCatRecord = value1.toString();
+        if (googleCatRecord.equals(catalogHeader)) { return; }
         context.getCounter(ParserEnum.INPUTREC).increment(1);
 
         try {
-            GoogleProductItem gpi = GoogleProductItem.fromParse(googleCatRecord);
+            GoogleProductItem gpi = googleProductItemParser.parse(googleCatRecord);
 
-            String productId =gpi.getId();
-            String lowPicURI =gpi.getAdditionalImageLink();
-            String thumbPicURI =gpi.getAdditionalImageLink();
+            String productId = gpi.getId();
+            String lowPicURI = gpi.getAdditionalImageLink();
+            String thumbPicURI = gpi.getAdditionalImageLink();
             String productDesc = gpi.getTitle();
             String longProductDesc = gpi.getDescription();
             String category = cleanCategory(gpi.getGoogleProductCategory());
@@ -59,6 +75,13 @@ public class GoogleTextParserMapper extends
             Logger.getLogger(GoogleTextParserMapper.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    private String getCatalogHeader(String filename) throws FileNotFoundException, IOException {
+        BufferedReader br = new BufferedReader(new FileReader(filename));
+        String catalogHeader = br.readLine();
+        br.close();
+        return catalogHeader;
     }
 
     private String cleanCategory(String category) {

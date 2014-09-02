@@ -15,6 +15,24 @@
             <arg>s3n://${bucketName}/${catalogName}</arg>
             <arg>${advertiserRoot}/raw-catalog</arg>
         </distcp>
+        <ok to="extract-header"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="extract-header">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <main-class>com.kosei.adcreatorworkflow.hadoop.GoogleHeaderExtractor</main-class>
+            <arg>${advertiserRoot}/raw-catalog/${catalogName}</arg>
+            <arg>${advertiserRoot}/raw-catalog/${catalogName}.header</arg>
+        </java>
         <ok to="parse-catalog"/>
         <error to="fail"/>
     </action>
@@ -86,9 +104,15 @@
                     <value>${timestamp}</value>
                 </property>
                 <property>
+                    <name>catalog.header.file</name>
+                    <value>${catalogName}.header</value>
+                </property>
+                <property>
                     <name>meta.output</name>
                     <value>${metaCatalogDir}</value>
                 </property>
+
+                <file>${advertiserRoot}/raw-catalog/${catalogName}.header</file>
 
             </configuration>
         </map-reduce>

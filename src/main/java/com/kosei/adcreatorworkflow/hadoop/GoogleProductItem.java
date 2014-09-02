@@ -7,6 +7,8 @@ package com.kosei.adcreatorworkflow.hadoop;
  * Tenn Cool Flow Ladies Long Sleeved Cycle Jersey	http://www.example.com/clothing/sports/product?id=CLO1029384&src=gshopping&popup=false	A ladies' cycling jersey designed for.	CLO-1029384	new	33.99 USD	available for order	http://images.example.com/CLO-1029384.jpg	US::Standard Free Shipping:0 USD		5060155240282				Sporting Goods > Outdoor Recreation > Cycling > Bicycle Clothing > Bicycle Jerseys		Black/Red/White	M	Female	Adult		25.49 USD	2011-03-01T16:00-08:00/2011-03-03T16:00-08:00
  */
 public class GoogleProductItem {
+    public static int NUM_PRODUCT_ITEM_ENTRIES = 23;
+
     private String title;
     private String link;
     private String description;
@@ -59,7 +61,6 @@ public class GoogleProductItem {
         i.setItemGroupId(s[20]);
         i.setSalePrice(s[21]);
         i.setSalePriceEffectiveDate(s[22]);
-
 
         return i;
     }
