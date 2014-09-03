@@ -49,15 +49,16 @@ public class GoogleTextParserMapper extends
             GoogleProductItem gpi = googleProductItemParser.parse(googleCatRecord);
 
             String productId = gpi.getId();
-            String lowPicURI = gpi.getAdditionalImageLink();
-            String thumbPicURI = gpi.getAdditionalImageLink();
+            String imageURI = gpi.getImageLink();
+            String additionalImageURIs = gpi.getAdditionalImageLink();
             String productDesc = gpi.getTitle();
             String longProductDesc = gpi.getDescription();
             String category = cleanCategory(gpi.getGoogleProductCategory());
             String availability = gpi.getAvailability();
 
             if (productId.isEmpty()) { return; }
-            AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId, lowPicURI, thumbPicURI,
+            AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId,
+                    GoogleProductItemParser.getAllImageURIs(imageURI, additionalImageURIs),
                     AdCreatorAssetsWritable.STATUS_RAW, null, productDesc, longProductDesc);
             ad.putMeta(new Text("category"), new BytesWritable(category.getBytes()));
             ad.putMeta(new Text("timestamp"), new BytesWritable(timestampBytes));
@@ -69,12 +70,9 @@ public class GoogleTextParserMapper extends
             context.write(new Text(ad.getId()), ad);
             context.getCounter(ParserEnum.SUCCESS).increment(1);
 
-        } catch (IOException ex) {
-            Logger.getLogger(GoogleTextParserMapper.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NullPointerException ex) {
-            Logger.getLogger(GoogleTextParserMapper.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            Logger.getLogger(GoogleTextParserMapper.class.getName()).log(Level.SEVERE, null, e);
         }
-
     }
 
     private String getCatalogHeader(String filename) throws FileNotFoundException, IOException {

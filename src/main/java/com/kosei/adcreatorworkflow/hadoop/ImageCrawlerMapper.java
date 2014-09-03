@@ -28,11 +28,7 @@ public class ImageCrawlerMapper extends
 
             throws IOException, InterruptedException {
 
-        String uri = value.getThumbPicURI().toString();
-        if (uri == null || uri.length() == 0) {
-            uri = value.getLowPicURI().toString();
-        }
-
+        String uri = value.getImageURIs().toStrings()[0];
 
         if (value.getStatus().get()==AdCreatorAssetsWritable.STATUS_IMAGE_RETRIEVED) {
             Logger.getLogger(ImageCrawlerMapper.class.getName()).log(Level.INFO, "Image Already retrieved ID:" + value.getId());
@@ -60,7 +56,7 @@ public class ImageCrawlerMapper extends
             }
 
             byte[] data = readFully(conn.getInputStream());
-            value.setGeneratedJpgAd(data);
+            value.setImageBlob(data);
             value.setStatus(AdCreatorAssetsWritable.STATUS_IMAGE_RETRIEVED);
 
             ProtobufWritable<AdComponents> out = ProtobufWritable.newInstance(AdComponents.class);

@@ -12,8 +12,8 @@
             </prepare>
             <arg>-Dfs.s3n.awsAccessKeyId=${awsAccessKey}</arg>
             <arg>-Dfs.s3n.awsSecretAccessKey=${awsSecretKey}</arg>
-            <arg>s3n://${bucketName}/${catalogName}</arg>
-            <arg>${advertiserRoot}/raw-catalog</arg>
+            <arg>${catalogLocation}</arg>
+            <arg>${advertiserRoot}/raw-catalog/${catalogName}</arg>
         </distcp>
         <ok to="extract-header"/>
         <error to="fail"/>
@@ -111,10 +111,8 @@
                     <name>meta.output</name>
                     <value>${metaCatalogDir}</value>
                 </property>
-
-                <file>${advertiserRoot}/raw-catalog/${catalogName}.header</file>
-
             </configuration>
+            <file>${advertiserRoot}/raw-catalog/${catalogName}.header</file>
         </map-reduce>
         <ok to="crawl-catalog"/>
         <error to="fail"/>
@@ -188,10 +186,9 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-            <main-class>com.kosei.dropwizard.management.UploadCatalogMeta</main-class>
+            <main-class>com.kosei.dropwizard.management.client.cli.UploadProductsToCategories</main-class>
             <arg>http://localhost:8080</arg>
             <arg>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</arg>
-            <arg>${advertiserName}</arg>
             <arg>${catalogId}</arg>
             <arg>${metaCatalogDir}</arg>
         </java>

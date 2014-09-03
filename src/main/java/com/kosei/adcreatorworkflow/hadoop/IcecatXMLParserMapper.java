@@ -55,8 +55,8 @@ public class IcecatXMLParserMapper extends
                 }
             }
 
-            AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId, lowPicURI,  thumbPicURI,  1, null,
-            productDesc,  longProductDesc);
+            AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId, new String[] {lowPicURI, thumbPicURI},
+                    1, null, productDesc, longProductDesc);
 
 
             context.write(NullWritable.get(), ad);

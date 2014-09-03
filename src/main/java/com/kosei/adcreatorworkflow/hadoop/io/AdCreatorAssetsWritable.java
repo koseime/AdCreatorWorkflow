@@ -16,94 +16,87 @@ public class AdCreatorAssetsWritable implements Writable {
     public static final int STATUS_RAW = 1;
     public static final int STATUS_IMAGE_RETRIEVED = 2;
 
-    private BytesWritable generatedJpgAd;
-
-    private Text id, lowPicURI, thumbPicURI, productDesc, longProductDesc;
+    private BytesWritable imageBlob;
+    private ArrayWritable imageURIs;
+    private Text id, productDesc, longProductDesc;
     private IntWritable status;
-
     private MapWritable meta;
 
     public AdCreatorAssetsWritable() {
         this.id = new Text();
         this.productDesc = new Text();
         this.longProductDesc = new Text();
-        this.lowPicURI = new Text();
-        this.thumbPicURI = new Text();
+        this.imageURIs = new ArrayWritable(UTF8.class);
         this.status = new IntWritable(STATUS_EMPTY);
         this.meta = new MapWritable();
-        generatedJpgAd = null;
+        this.imageBlob = null;
     }
 
 
-    public AdCreatorAssetsWritable(Text id, Text lowPicURI, Text thumbPicURI, IntWritable status, BytesWritable generatedJpgAd,
+    public AdCreatorAssetsWritable(Text id, ArrayWritable imageURIs, IntWritable status, BytesWritable imageBlob, 
                                    Text productDesc, Text longProductDesc) {
         this.id = id;
         this.productDesc = productDesc;
         this.longProductDesc = longProductDesc;
-        this.thumbPicURI = thumbPicURI;
-        this.lowPicURI = lowPicURI;
+        this.imageURIs = imageURIs;
         this.status = status;
         this.meta = new MapWritable();
-        this.generatedJpgAd = generatedJpgAd;
+        this.imageBlob = imageBlob;
     }
 
-    public AdCreatorAssetsWritable(String id, String lowPicURI, String thumbPicURI, int status, byte[] generatedJpgAd,
+    public AdCreatorAssetsWritable(String id, String[] imageURIs, int status, byte[] imageBlob,
                                    String productDesc, String longProductDesc) {
         this.id = new Text(id);
         this.productDesc =  new Text(productDesc);
         this.longProductDesc =  new Text(longProductDesc);
-        this.thumbPicURI =  new Text(thumbPicURI);
-        this.lowPicURI =  new Text(lowPicURI);
+        this.imageURIs = new ArrayWritable(imageURIs);
         this.status = new IntWritable(status);
-        if (generatedJpgAd==null)
-            generatedJpgAd = new byte[0];
         this.meta = new MapWritable();
-        this.generatedJpgAd = new BytesWritable(generatedJpgAd);
+        if (imageBlob == null) { imageBlob = new byte[0]; }
+        this.imageBlob = new BytesWritable(imageBlob);
     }
 
 
     @Override
     public void readFields(DataInput in) throws IOException {
-        meta.readFields(in);
         id.readFields(in);
         productDesc.readFields(in);
         longProductDesc.readFields(in);
-        lowPicURI.readFields(in);
-        thumbPicURI.readFields(in);
+        imageURIs.readFields(in);
         status.readFields(in);
-        if (status.get()==1) {
-            byte[] generatedJpgAd = new byte[0];
-            this.generatedJpgAd = new BytesWritable(generatedJpgAd);
+        meta = new MapWritable();
+        meta.readFields(in);
+        if (status.get() == 1) {
+            imageBlob = new BytesWritable(new byte[0]);
         } else {
-            generatedJpgAd.readFields(in);
+            imageBlob.readFields(in);
         }
     }
 
     @Override
     public void write(DataOutput out) throws IOException {
-        meta.write(out);
         id.write(out);
         productDesc.write(out);
         longProductDesc.write(out);
-        lowPicURI.write(out);
-        thumbPicURI.write(out);
+        imageURIs.write(out);
         status.write(out);
+        meta.write(out);
         if (status.get() != 1) {
-            generatedJpgAd.write(out);
+            imageBlob.write(out);
         }
     }
 
 
-    public BytesWritable getGeneratedJpgAd() {
-        return generatedJpgAd;
+    public BytesWritable getImageBlob() {
+        return imageBlob;
     }
 
-    public void setGeneratedJpgAd(BytesWritable generatedJpgAd) {
-        this.generatedJpgAd =  generatedJpgAd;
+    public void setImageBlob(BytesWritable imageBlob) {
+        this.imageBlob =  imageBlob;
     }
 
-    public void setGeneratedJpgAd(byte[] generatedJpgAd) {
-        this.generatedJpgAd = new BytesWritable(generatedJpgAd);
+    public void setImageBlob(byte[] imageBlob) {
+        this.imageBlob = new BytesWritable(imageBlob);
     }
 
     public Text getId() {
@@ -118,12 +111,8 @@ public class AdCreatorAssetsWritable implements Writable {
         this.status = status;
     }
 
-    public Text getLowPicURI() {
-        return lowPicURI;
-    }
-
-    public Text getThumbPicURI() {
-        return thumbPicURI;
+    public ArrayWritable getImageURIs() {
+        return imageURIs;
     }
 
     public Text getProductDesc() {

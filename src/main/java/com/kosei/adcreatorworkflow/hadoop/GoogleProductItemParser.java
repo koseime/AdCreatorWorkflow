@@ -47,8 +47,12 @@ public class GoogleProductItemParser {
 
     static public String[] getAllImageURIs(String imageURI, String additionalImageURIs) {
         ArrayList<String> s = new ArrayList<>();
-        s.add(imageURI);
-        s.addAll(Arrays.asList(additionalImageURIs.split(",")));
+        if (!imageURI.isEmpty()) {
+            s.add(imageURI);
+        }
+        if (!additionalImageURIs.isEmpty()) {
+            s.addAll(Arrays.asList(additionalImageURIs.split(",")));
+        }
         return s.toArray(new String[s.size()]);
     }
 

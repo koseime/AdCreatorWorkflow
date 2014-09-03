@@ -4,55 +4,42 @@
         <name>user.name</name>
         <value>chantat</value>
     </property>
-    <property>
-        <name>nameNode</name>
-        <value>hdfs://localhost:9000</value>
-    </property>
-    <property>
-        <name>jobTracker</name>
-        <value>localhost:8032</value>
-    </property>
-    <property>
-        <name>queueName</name>
-        <value>default</value>
-    </property>
-    <property>
-        <name>hdfsconfig</name>
-        <value>${nameNode}</value>
-    </property>
 
 
     <!-- Workspace -->
     <property>
-        <name>homeRoot</name>
-        <value>${nameNode}/user/chantat</value>
-    </property>
-    <property>
         <name>workflowRoot</name>
-        <value>${homeRoot}/kosei/adcreator/oozie/process-catalog</value>
+        <value>hdfs://localhost:9000/user/chantat/kosei/adcreator/oozie/process-catalog</value>
     </property>
-    <property>
-        <name>advertisersRoot</name>
-        <value>${homeRoot}/catalogs</value>
-    </property>
-
 
     <!-- Catalog information -->
     <property>
         <name>catalogId</name>
-        <value>amazontest-12345-1</value>
+        <value>111</value>
     </property>
     <property>
-        <name>advertiserName</name>
-        <value>amazontest</value>
+        <name>advertiserId</name>
+        <value>12345</value>
+    </property>
+    <property>
+        <name>catalogVersion</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>catalogLocation</name>
+        <value>s3n://catalog-test/kosei.csv</value>
+    </property>
+    <property>
+        <name>timestamp</name>
+        <value>555555555</value>
     </property>
     <property>
         <name>DAY</name>
-        <value>15</value>
+        <value>02</value>
     </property>
     <property>
         <name>MONTH</name>
-        <value>08</value>
+        <value>09</value>
     </property>
     <property>
         <name>YEAR</name>
@@ -69,32 +56,31 @@
         <name>awsSecretKey</name>
         <value>vRy0uwV+I+Z0mVNqzWGEXCGrTKPQ5HTKx96JMn8b</value>
     </property>
-    <property>
-        <name>bucketName</name>
-        <value>catalog-test</value>
-    </property>
-
 
     <!-- File Directories -->
     <property>
         <name>advertiserRoot</name>
-        <value>${advertisersRoot}/${advertiserName}</value>
+        <value>${advertisersRoot}/${advertiserId}</value>
     </property>
     <property>
         <name>processedCatalogRoot</name>
         <value>${advertiserRoot}/catalog/${YEAR}/${MONTH}/${DAY}</value>
     </property>
     <property>
+        <name>catalogName</name>
+        <value>${advertiserId}-${timestamp}-${catalogId}-${catalogVersion}</value>
+    </property>
+    <property>
         <name>parsedCatalogDir</name>
-        <value>${processedCatalogRoot}/${catalogId}</value>
+        <value>${processedCatalogRoot}/${catalogName}</value>
     </property>
     <property>
         <name>imageCatalogDir</name>
-        <value>${processedCatalogRoot}/${catalogId}.images</value>
+        <value>${processedCatalogRoot}/${catalogName}.images</value>
     </property>
     <property>
         <name>metaCatalogDir</name>
-        <value>${processedCatalogRoot}/${catalogId}.meta</value>
+        <value>${processedCatalogRoot}/${catalogName}.meta</value>
     </property>
 
 
