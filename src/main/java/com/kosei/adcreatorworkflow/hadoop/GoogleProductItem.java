@@ -256,7 +256,6 @@ public class GoogleProductItem {
     //
     private final static String schema ="title	link	description	id	condition	price	availability	image link	shipping	shipping weight	gtin	brand	mpn	google product category	product type	additional image link	color	size	gender	age group	item group id	sale price	sale price effective date";
 
-
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer. append((title==null)?"" : title);

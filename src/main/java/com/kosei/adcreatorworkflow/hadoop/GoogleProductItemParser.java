@@ -2,6 +2,7 @@ package com.kosei.adcreatorworkflow.hadoop;
 
 import com.google.common.collect.ImmutableMap;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -44,12 +45,20 @@ public class GoogleProductItemParser {
         }
     }
 
+    static public String[] getAllImageURIs(String imageURI, String additionalImageURIs) {
+        ArrayList<String> s = new ArrayList<>();
+        s.add(imageURI);
+        s.addAll(Arrays.asList(additionalImageURIs.split(",")));
+        return s.toArray(new String[s.size()]);
+    }
+
     public GoogleProductItem parse(String in) {
         if (header.isEmpty()) {
             return GoogleProductItem.fromParse(in);
         }
-        List<String> s = Arrays.asList(in.split("\t"));
-        s.add("");
+        // split will not include empty strings at the end, we add non-empty string at the end as a hack
+        ArrayList<String> s = new ArrayList<>(Arrays.asList((in + "\t$").split("\t")));
+        s.set(s.size() - 1, "");
         GoogleProductItem gpi = new GoogleProductItem();
         gpi.setId(s.get(idToIndex[0]));
         gpi.setImageLink(s.get(idToIndex[1]));
