@@ -1,152 +1,98 @@
 <configuration>
-    <!-- Job information -->
     <property>
-        <name>user.name</name>
-        <value>chantat</value>
-    </property>
-    <property>
-        <name>nameNode</name>
-        <value>hdfs://localhost:9000</value>
-    </property>
-    <property>
-        <name>jobTracker</name>
-        <value>localhost:8032</value>
-    </property>
-    <property>
-        <name>queueName</name>
-        <value>default</value>
-    </property>
-    <property>
-        <name>hdfsconfig</name>
-        <value>${nameNode}</value>
-    </property>
-
-    <!-- Workspace -->
-    <property>
-        <name>homeRoot</name>
-        <value>${nameNode}/user/chantat</value>
+        <name>bucketName</name>
+        <value>catalog-upload</value>
     </property>
     <property>
         <name>workflowRoot</name>
-        <value>${homeRoot}/kosei/adcreator/oozie/create-campaign</value>
+        <value>hdfs://localhost:9000/user/chantat/kosei/adcreator/oozie/create-campaign</value>
     </property>
-    <property>
-        <name>advertisersRoot</name>
-        <value>${homeRoot}/advertisers</value>
-    </property>
-    <property>
-        <name>fontsDir</name>
-        <value>${homeRoot}/fonts</value>
-    </property>
-
-    <!-- Catalog information -->
-    <property>
-        <name>advertiserName</name>
-        <value>amazontest</value>
-    </property>
-    <property>
-        <name>day</name>
-        <value>18</value>
-    </property>
-    <property>
-        <name>month</name>
-        <value>08</value>
-    </property>
-    <property>
-        <name>year</name>
-        <value>2014</value>
-    </property>
-    <property>
-        <name>timeStamp</name>
-        <value>1407989823537</value>
-    </property>
-    <property>
-        <name>catalogName</name>
-        <value>google-input.txt</value>
-    </property>
-    <property>
-        <name>catalogFileName</name>
-        <value>${advertiserName}.${timeStamp}.${catalogName}</value>
-    </property>
-
-    <!-- Campaign information -->
-    <property>
-        <name>campaignId</name>
-        <value>campaign1</value>
-    </property>
-    <property>
-        <name>campaignDirName</name>
-        <value>${advertiserName}.${campaignId}.${timeStamp}</value>
-    </property>
-    <property>
-        <name>campaignTarName</name>
-        <value>${advertiserName}.${campaignId}.${timeStamp}.tar.gz</value>
-    </property>
-    <property>
-        <name>campaignMetaName</name>
-        <value>${advertiserName}.${campaignId}.${timeStamp}.meta</value>
-    </property>
-
-
-    <!-- AWS credentials -->
     <property>
         <name>awsAccessKey</name>
         <value>AKIAJBUEAZ3FONWAW4QQ</value>
     </property>
     <property>
-        <name>awsSecretKey</name>
-        <value>vRy0uwV+I+Z0mVNqzWGEXCGrTKPQ5HTKx96JMn8b</value>
-    </property>
-    <property>
-        <name>bucketName</name>
-        <value>catalog-upload</value>
-    </property>
-
-
-    <!-- File Directories -->
-    <property>
-        <name>advertiserRoot</name>
-        <value>${advertisersRoot}/${advertiserName}</value>
+        <name>year</name>
+        <value>1969</value>
     </property>
     <property>
         <name>imageCatalogDir</name>
-        <value>${advertiserRoot}/catalog/2014/08/15/${catalogFileName}.images</value>
-    </property>
-
-    <property>
-        <name>campaignRoot</name>
-        <value>${advertiserRoot}/${campaignId}/${year}/${month}/${day}</value>
+        <value>12345/catalog/2014/09/02/12345-555555555-111-1.images</value>
     </property>
     <property>
-        <name>campaignImageDir</name>
-        <value>${campaignRoot}/${campaignDirName}</value>
-    </property>
-    <property>
-        <name>campaignTarDir</name>
-        <value>${campaignRoot}/${campaignTarName}</value>
-    </property>
-    <property>
-        <name>campaignMetaDir</name>
-        <value>${campaignRoot}/${campaignMetaName}</value>
-    </property>
-    <property>
-        <name>resourcesDir</name>
-        <value>${advertiserRoot}/campaign/${campaignId}/resources</value>
-    </property>
-
-
-    <!-- Workflow Properties -->
-    <property>
-        <name>oozie.use.system.libpath</name>
-        <value>true</value>
+        <name>user.name</name>
+        <value>chantat</value>
     </property>
     <property>
         <name>oozie.coord.application.path</name>
         <value>${workflowRoot}/coordinator.xml</value>
     </property>
     <property>
-        <name>ooozie.wf.rerun.failnodes</name>
-        <value>true</value>
+        <name>awsSecretKey</name>
+        <value>vRy0uwV+I+Z0mVNqzWGEXCGrTKPQ5HTKx96JMn8b</value>
+    </property>
+    <property>
+        <name>advertiserId</name>
+        <value>12345</value>
+    </property>
+    <property>
+        <name>campaignVersionId</name>
+        <value>111</value>
+    </property>
+    <property>
+        <name>campaignId</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>month</name>
+        <value>11</value>
+    </property>
+    <property>
+        <name>startCoordDate</name>
+        <value>2014-09-04T17:37Z</value>
+    </property>
+    <property>
+        <name>endCoordDate</name>
+        <value>2014-09-05T17:32Z</value>
+    </property>
+    <property>
+        <name>day</name>
+        <value>31</value>
+    </property>
+    <property>
+        <name>timestamp</name>
+        <value>5555555</value>
+    </property>
+    <property>
+        <name>advertiserRoot</name>
+        <value>${advertisersRoot}/${advertiserId}</value>
+    </property>
+    <property>
+        <name>campaignRoot</name>
+        <value>${advertiserRoot}/campaign/${year}/${month}/${day}</value>
+    </property>
+    <property>
+        <name>campaignName</name>
+        <value>${advertiserId}-${timestamp}-${campaignId}-${campaignVersionId}</value>
+    </property>
+    <property>
+        <name>compactedCatalogDir</name>
+        <value>${campaignRoot}/${campaignName}.catalog</value>
+    </property>
+    <property>
+        <name>campaignImageDir</name>
+        <value>${campaignRoot}/${campaignName}.raw</value>
+    </property>
+    <property>
+        <name>campaignTarDir</name>
+        <value>${campaignRoot}/${campaignName}.tar.gz</value>
+    </property>
+    <property>
+        <name>campaignMetaDir</name>
+        <value>${campaignRoot}/${campaignName}.meta</value>
+    </property>
+    <property>
+        <name>resourcesDir</name>
+        <value>${advertiserRoot}/campaign/resources/${campaignVersionId}</value>
     </property>
 </configuration>
-

@@ -203,7 +203,7 @@
             <arg>-Dfs.s3n.awsAccessKeyId=${awsAccessKey}</arg>
             <arg>-Dfs.s3n.awsSecretAccessKey=${awsSecretKey}</arg>
             <arg>${campaignTarDir}</arg>
-            <arg>s3n://${bucketName}/${campaignId}.tar.gz</arg>
+            <arg>s3n://${bucketName}/${campaignName}.tar.gz</arg>
         </distcp>
         <ok to="upload-campaign-meta"/>
         <error to="fail"/>
@@ -219,11 +219,10 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-            <main-class>com.kosei.dropwizard.management.UploadCampaignMeta</main-class>
+            <main-class>com.kosei.dropwizard.management.client.cli.UploadProductsToImagePaths</main-class>
             <arg>http://localhost:8080</arg>
             <arg>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</arg>
-            <arg>${advertiserName}</arg>
-            <arg>${campaignId}</arg>
+            <arg>${campaignVersionId}</arg>
             <arg>${campaignMetaDir}/part-r-00000</arg>
         </java>
         <ok to="end"/>
