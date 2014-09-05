@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow-app xmlns="uri:oozie:workflow:0.2" name="create-campaign-wf">
-    <start to="catalog-compactor"/>
+    <start to="bundle-resource"/>
+
+    <action name="bundle-resource">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <mkdir path="${resourcesDir}"/>
+            </prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <main-class>com.kosei.dropwizard.management.client.cli.BundleCreativeAssets</main-class>
+            <arg>${advertiserClientApiEndPoint}</arg>
+            <arg>${advertiserClientApiToken}</arg>
+            <arg>${awsAccessKey}</arg>
+            <arg>${awsSecretKey}</arg>
+            <arg>${campaignVersionId}</arg>
+            <arg>${resourcesDir}/layout_resource.tar.gz</arg>
+        </java>
+        <ok to="catalog-compactor"/>
+        <error to="fail"/>
+    </action>
 
     <action name='catalog-compactor'>
         <map-reduce>

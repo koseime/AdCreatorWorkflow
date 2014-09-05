@@ -37,7 +37,7 @@
     </property>
     <property>
         <name>campaignVersionId</name>
-        <value>111</value>
+        <value>2</value>
     </property>
     <property>
         <name>campaignId</name>
@@ -93,16 +93,26 @@
     </property>
     <property>
         <name>resourcesDir</name>
-        <value>${advertiserRoot}/campaign/resources/${campaignVersionId}</value>
+        <value>${advertiserRoot}/campaign/resources/${campaignName}</value>
     </property>
 
     <!-- Management Config -->
     <property>
         <name>managementClientApiEndPoint</name>
-        <value>http://localhost:8080</value>
+        <value>http://dev1.kosei.me:8380</value>
     </property>
     <property>
         <name>managementClientApiToken</name>
+        <value>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</value>
+    </property>
+    
+    <!-- Advertiser Config -->
+    <property>
+        <name>advertiserClientApiEndPoint</name>
+        <value>http://dev1.kosei.me:8180</value>
+    </property>
+    <property>
+        <name>advertiserClientApiToken</name>
         <value>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</value>
     </property>
 </configuration>
