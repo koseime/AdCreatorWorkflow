@@ -97,5 +97,15 @@
         <name>ooozie.wf.rerun.failnodes</name>
         <value>true</value>
     </property>
+
+    <!-- Management Config -->
+    <property>
+        <name>managementClientApiEndPoint</name>
+        <value>http://localhost:8080</value>
+    </property>
+    <property>
+        <name>managementClientApiToken</name>
+        <value>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</value>
+    </property>
 </configuration>
 

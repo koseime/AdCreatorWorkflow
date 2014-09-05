@@ -187,8 +187,8 @@
                 </property>
             </configuration>
             <main-class>com.kosei.dropwizard.management.client.cli.UploadProductsToCategories</main-class>
-            <arg>http://localhost:8080</arg>
-            <arg>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</arg>
+            <arg>${managementClientApiEndPoint}</arg>
+            <arg>${managementClientApiToken}</arg>
             <arg>${catalogId}</arg>
             <arg>${metaCatalogDir}</arg>
         </java>
