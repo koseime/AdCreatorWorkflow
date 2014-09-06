@@ -4,6 +4,10 @@
         <value>catalog-upload</value>
     </property>
     <property>
+        <name>resourceBucketName</name>
+        <value>kosei-dev/ad-creative-bundle</value>
+    </property>
+    <property>
         <name>workflowRoot</name>
         <value>hdfs://localhost:9000/user/chantat/kosei/adcreator/oozie/create-campaign</value>
     </property>
@@ -106,13 +110,5 @@
         <value>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</value>
     </property>
     
-    <!-- Advertiser Config -->
-    <property>
-        <name>advertiserClientApiEndPoint</name>
-        <value>http://dev1.kosei.me:8180</value>
-    </property>
-    <property>
-        <name>advertiserClientApiToken</name>
-        <value>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</value>
-    </property>
+
 </configuration>
