@@ -242,6 +242,26 @@
             <arg>${campaignVersionId}</arg>
             <arg>${campaignMetaDir}/part-r-00000</arg>
         </java>
+        <ok to="deploy-to-s3"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="deploy-to-s3">
+        <java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+            </configuration>
+            <main-class>com.kosei.dropwizard.management.client.cli.DeployAdsToS3</main-class>
+            <arg>${managementClientApiEndPoint}</arg>
+            <arg>${managementClientApiToken}</arg>
+            <arg>${campaignVersionId}</arg>
+            <arg>${campaignName}.tar.gz</arg>
+        </java>
         <ok to="end"/>
         <error to="fail"/>
     </action>
