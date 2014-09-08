@@ -68,6 +68,11 @@
                     <value>com.kosei.adcreatorworkflow.hadoop.GoogleTextParserReducer</value>
                 </property>
                 <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>20</value>
+                </property>
+                
+                <property>
                     <name>mapreduce.job.inputformat.class</name>
                     <value>org.apache.hadoop.mapreduce.lib.input.TextInputFormat</value>
                 </property>
