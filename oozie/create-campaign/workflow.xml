@@ -203,6 +203,10 @@
                     <value>${campaignImageDir}</value>
                 </property>
                 <property>
+                    <name>campaign.version.id</name>
+                    <value>${campaignVersionId}</value>
+                </property>
+                <property>
                     <name>tar.output</name>
                     <value>${campaignTarDir}</value>
                 </property>

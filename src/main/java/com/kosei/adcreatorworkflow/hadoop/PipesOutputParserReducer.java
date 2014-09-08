@@ -13,16 +13,19 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONObject;
 
 /**
  * @author root
  */
 public class PipesOutputParserReducer extends
         Reducer<NullWritable, BytesWritable, NullWritable, Text> {
+    private final static Logger LOG = Logger.getLogger(PipesOutputParserReducer.class.getName());
 
     @Override
     public void reduce(NullWritable key, Iterable<BytesWritable> values, Context context)
@@ -31,6 +34,8 @@ public class PipesOutputParserReducer extends
         String tarOutput = context.getConfiguration().get("tar.output");
         Path file = new Path(tarOutput);
         FileSystem hdfs = FileSystem.get(file.toUri(), context.getConfiguration());
+
+        String campaignVersionId = context.getConfiguration().get("campaign.version.id");
 
         if (hdfs.exists(file)) { hdfs.delete(file, true); }
 
@@ -43,10 +48,18 @@ public class PipesOutputParserReducer extends
             AdComponents adComponents = AdComponents.parseFrom(getValidBytes(value));
 
             StringBuilder productIdImageNameListStringBuilder = new StringBuilder(adComponents.getId());
+            long timestamp = getTimestamp(adComponents);
+
+            if (timestamp == -1) {
+                LOG.log(Level.SEVERE, "timestamp not found for product id: " + adComponents.getId());
+                continue;
+            }
+
             if (!isDeleted(adComponents)) {
                 for (int i = 0; i < adComponents.getGeneratedAdsCount(); i++) {
                     AdComponents.Ad ad = adComponents.getGeneratedAds(i);
-                    String file_name = adComponents.getId() + "_" + ad.getLayoutName() + ".jpg";
+                    String file_name = adComponents.getId() + "_" + Long.toString(timestamp) + "_"
+                            + campaignVersionId + "_" + ad.getLayoutName() + ".jpg";
                     TarArchiveEntry tarEntry = new TarArchiveEntry(file_name);
                     tarEntry.setSize(ad.getAdJpg().size());
                     tarOut.putArchiveEntry(tarEntry);
@@ -71,11 +84,6 @@ public class PipesOutputParserReducer extends
         }
         tarOut.finish();
         tarOut.close();
-
-        // TODO: remove these?
-        gzOut.close();
-        bufferedOut.close();
-        out.close();
     }
 
     public byte[] getValidBytes(BytesWritable bw) {
@@ -90,6 +98,16 @@ public class PipesOutputParserReducer extends
             }
         }
         return false;
+    }
+
+    private long getTimestamp(AdComponents adComponents) {
+        for (int i = 0; i < adComponents.getMetaCount(); i++) {
+            AdComponents.Meta metaEntry = adComponents.getMeta(i);
+            if (metaEntry.getKey().equals("timestamp")) {
+                return ByteBuffer.wrap(metaEntry.getValue().toByteArray()).getLong();
+            }
+        }
+        return -1;
     }
 
 }
