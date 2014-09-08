@@ -47,15 +47,17 @@ public class PipesOutputParserReducer extends
         for (BytesWritable value : values) {
             AdComponents adComponents = AdComponents.parseFrom(getValidBytes(value));
 
-            StringBuilder productIdImageNameListStringBuilder = new StringBuilder(adComponents.getId());
             long timestamp = getTimestamp(adComponents);
-
             if (timestamp == -1) {
                 LOG.log(Level.SEVERE, "timestamp not found for product id: " + adComponents.getId());
                 continue;
             }
 
+            StringBuilder productIdImageNameListStringBuilder = new StringBuilder(adComponents.getId());
             if (!isDeleted(adComponents)) {
+                if (adComponents.getStatus() != AdComponents.Status.AD_GENERATED) {
+                    continue;
+                }
                 for (int i = 0; i < adComponents.getGeneratedAdsCount(); i++) {
                     AdComponents.Ad ad = adComponents.getGeneratedAds(i);
                     String file_name = adComponents.getId() + "_" + Long.toString(timestamp) + "_"
