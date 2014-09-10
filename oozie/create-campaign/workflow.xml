@@ -60,7 +60,10 @@
                     <name>mapreduce.job.output.value.class</name>
                     <value>org.apache.hadoop.io.BytesWritable</value>
                 </property>
-
+                <property>
+                    <name>mapreduce.input.fileinputformat.input.dir.recursive</name>
+                    <value>true</value>
+                </property>
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
                     <value>${advertisersRoot}/${imageCatalogDir}</value>

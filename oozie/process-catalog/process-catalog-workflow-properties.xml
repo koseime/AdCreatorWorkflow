@@ -27,7 +27,7 @@
     </property>
     <property>
         <name>catalogLocation</name>
-        <value>s3n://catalog-test/kosei.csv</value>
+        <value>s3n://kosei-prod/catalog/3-eab54638-36a4-4a7d-980b-d7bd3db3869b-kidizen_catalog.csv</value>
     </property>
     <property>
         <name>timestamp</name>

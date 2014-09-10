@@ -5,7 +5,7 @@
     </property>
     <property>
         <name>resourceBucketName</name>
-        <value>kosei-dev/ad-creative-bundle</value>
+        <value>kosei-prod/ad-creative-bundle</value>
     </property>
     <property>
         <name>workflowRoot</name>
@@ -21,7 +21,11 @@
     </property>
     <property>
         <name>imageCatalogDir</name>
-        <value>12345/catalog/2014/09/02/12345-555555555-111-1.images</value>
+        <value>3/catalog/archive/111/</value>
+    </property>
+    <property>
+        <name>triggerDir</name>
+        <value>3/catalog/archive/111</value>
     </property>
     <property>
         <name>user.name</name>
@@ -37,15 +41,15 @@
     </property>
     <property>
         <name>advertiserId</name>
-        <value>12345</value>
+        <value>3</value>
     </property>
     <property>
         <name>campaignVersionId</name>
-        <value>2</value>
+        <value>3</value>
     </property>
     <property>
         <name>campaignId</name>
-        <value>1</value>
+        <value>3</value>
     </property>
     <property>
         <name>month</name>
@@ -53,11 +57,11 @@
     </property>
     <property>
         <name>startCoordDate</name>
-        <value>2014-09-04T17:37Z</value>
+        <value>2014-09-08T17:37Z</value>
     </property>
     <property>
         <name>endCoordDate</name>
-        <value>2014-09-05T17:32Z</value>
+        <value>2014-09-09T17:32Z</value>
     </property>
     <property>
         <name>day</name>
@@ -65,7 +69,7 @@
     </property>
     <property>
         <name>timestamp</name>
-        <value>5555555</value>
+        <value>1410294902723</value>
     </property>
     <property>
         <name>advertiserRoot</name>

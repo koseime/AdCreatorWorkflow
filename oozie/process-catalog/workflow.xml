@@ -177,6 +177,23 @@
 
             </configuration>
         </map-reduce>
+        <ok to="copy-to-archive"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="copy-to-archive">
+        <distcp xmlns="uri:oozie:distcp-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${advertiserRoot}/catalog/archive/${catalogId}/${catalogName}.images"/>
+                <mkdir path="${advertiserRoot}/catalog/archive/${catalogId}/_SUCCESS"/>
+            </prepare>
+            <arg>-Dfs.s3n.awsAccessKeyId=${awsAccessKey}</arg>
+            <arg>-Dfs.s3n.awsSecretAccessKey=${awsSecretKey}</arg>
+            <arg>${imageCatalogDir}</arg>
+            <arg>${advertiserRoot}/catalog/archive/${catalogId}</arg>
+        </distcp>
         <ok to="upload-catalog-meta"/>
         <error to="fail"/>
     </action>
