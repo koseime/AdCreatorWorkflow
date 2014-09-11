@@ -11,6 +11,10 @@ buildscript {
 apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/services-common/${servicesCommonVersion}/services-common-${servicesCommonVersion}-base.gradle"
 apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/services-common/${servicesCommonVersion}/services-common-${servicesCommonVersion}-release.gradle"
 
+project.ext { 
+    protoc = project.hasProperty('protoc') ? protoc : 'protoc'
+}
+
 // Use Java 7 by default
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
@@ -38,4 +42,5 @@ task run(type: JavaExec, dependsOn: classes) {
     args ''
 }
 
+protocPath = protoc
 protobufCodeGenPlugins = ["cpp:${protocPath}"]
