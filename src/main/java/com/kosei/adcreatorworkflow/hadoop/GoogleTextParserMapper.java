@@ -60,10 +60,13 @@ public class GoogleTextParserMapper extends
             AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId,
                     GoogleProductItemParser.getAllImageURIs(imageURI, additionalImageURIs),
                     AdCreatorAssetsWritable.STATUS_RAW, null, productDesc, longProductDesc);
-            ad.putMeta(new Text("category"), new BytesWritable(category.getBytes()));
             ad.putMeta(new Text("timestamp"), new BytesWritable(timestampBytes));
+
             if (availability.equals("out of stock")) {
+                ad.putMeta(new Text("category"), new BytesWritable("DELETED".getBytes()));
                 ad.putMeta(new Text("deleted"), new BytesWritable(availability.getBytes()));
+            } else {
+                ad.putMeta(new Text("category"), new BytesWritable(category.getBytes()));
             }
 
             context.write(new Text(""), ad);
