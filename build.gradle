@@ -1,5 +1,6 @@
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'protobuf'
+apply plugin: 'distribution'
 
 buildscript {
     apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/services-common/${servicesCommonVersion}/services-common-${servicesCommonVersion}-buildscript.gradle", to: buildscript
@@ -32,8 +33,20 @@ dependencies {
     )
 }
 
+distributions {
+    config {
+        contents {
+            baseName = rootProject.name + '-config'
+            into('/') {
+                from 'oozie'
+            }
+        }
+    }
+}
+
 artifacts {
     archives shadowJar
+    archives configDistTar
 }
 
 task run(type: JavaExec, dependsOn: classes) {
