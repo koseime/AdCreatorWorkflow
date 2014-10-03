@@ -3,14 +3,14 @@ apply plugin: 'protobuf'
 apply plugin: 'distribution'
 
 buildscript {
-    apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/services-common/${servicesCommonVersion}/services-common-${servicesCommonVersion}-buildscript.gradle", to: buildscript
+    apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-buildscript.gradle", to: buildscript
     dependencies { 
         classpath 'ws.antonov.gradle.plugins:gradle-plugin-protobuf:0.9.1'
     }    
 }
 
-apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/services-common/${servicesCommonVersion}/services-common-${servicesCommonVersion}-base.gradle"
-apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/services-common/${servicesCommonVersion}/services-common-${servicesCommonVersion}-release.gradle"
+apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-base.gradle"
+apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-release.gradle"
 
 project.ext { 
     protoc = project.hasProperty('protoc') ? protoc : 'protoc'
