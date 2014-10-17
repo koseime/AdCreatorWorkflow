@@ -21,7 +21,8 @@ sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
 
 dependencies {
-    compile( 
+    compile(
+        'com.kosei.services:management-client:0.64',
         'org.apache.hadoop:hadoop-common:2.2.0',
         'org.apache.hadoop:hadoop-client:2.2.0',
         'org.jdom:jdom:1.1.3',

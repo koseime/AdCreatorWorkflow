@@ -9,6 +9,7 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,6 +29,13 @@ public class ByteWritableImageCrawlerMapper extends
         Mapper<NullWritable, AdCreatorAssetsWritable, NullWritable, BytesWritable> {
 
     private final static Logger LOG = Logger.getLogger(ByteWritableImageCrawlerMapper.class.getName());
+
+    private MultipleOutputs out = null;
+
+    @Override
+    public void setup(Context context) {
+        out = new MultipleOutputs(context);
+    }
 
     @Override
     public void map(NullWritable key, AdCreatorAssetsWritable value, Context context)
@@ -51,7 +59,7 @@ public class ByteWritableImageCrawlerMapper extends
                 value.setStatus(AdCreatorAssetsWritable.STATUS_IMAGE_RETRIEVED);
 
                 BytesWritable bw = buildAdComponentsBytesWritable(value, AdComponents.Status.IMAGE_RETRIEVED);
-                context.write(NullWritable.get(), bw);
+                out.write(NullWritable.get(), bw, getFileName(value));
                 return;
             } catch (Exception e) {
                 LOG.log(Level.SEVERE, "Image retrieval failure for ID: " + value.getId() + " URL: " + uri, e);
@@ -60,7 +68,14 @@ public class ByteWritableImageCrawlerMapper extends
 
         value.setImageBlob(new byte[0]);
         BytesWritable bw = buildAdComponentsBytesWritable(value, AdComponents.Status.IMAGE_RETRIEVAL_FAILURE);
-        context.write(NullWritable.get(), bw);
+        out.write(NullWritable.get(), bw, "failed");
+    }
+
+    private String getFileName(AdCreatorAssetsWritable entry) {
+        String jobTimestamp = new String(entry.getMeta(new Text("job_timestamp")).copyBytes());
+        String advertiserId = new String(entry.getMeta(new Text("advertiser_id")).copyBytes());
+        String catalogId = new String(entry.getMeta(new Text("catalog_id")).copyBytes());
+        return advertiserId + "-" + jobTimestamp + "-" + catalogId + ".images";
     }
 
     private BytesWritable buildAdComponentsBytesWritable(AdCreatorAssetsWritable adCreatorAssetsWritable,
