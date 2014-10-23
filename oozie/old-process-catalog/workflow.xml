@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow-app xmlns="uri:oozie:workflow:0.2" name="process-catalog-wf">
-    <start to="catalog-pull"/>
+    <start to="distcp-node"/>
 
-    <action name="catalog-pull">
+    <action name="distcp-node">
+        <distcp xmlns="uri:oozie:distcp-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${advertiserRoot}/raw-catalog/${catalogName}"/>
+                <mkdir path="${advertiserRoot}/raw-catalog/"/>
+            </prepare>
+            <arg>-Dfs.s3n.awsAccessKeyId=${awsAccessKey}</arg>
+            <arg>-Dfs.s3n.awsSecretAccessKey=${awsSecretKey}</arg>
+            <arg>${catalogLocation}</arg>
+            <arg>${advertiserRoot}/raw-catalog/${catalogName}</arg>
+        </distcp>
+        <ok to="extract-header"/>
+        <error to="fail"/>
+    </action>
+
+    <action name="extract-header">
         <java>
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
@@ -12,36 +29,10 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-            <main-class>com.kosei.adcreatorworkflow.hadoop.CatalogPuller</main-class>
-            <arg>${managementClientApiToken}</arg>
-            <arg>${managementClientApiEndPoint}</arg>
+            <main-class>com.kosei.adcreatorworkflow.hadoop.GoogleHeaderExtractor</main-class>
+            <arg>${advertiserRoot}/raw-catalog/${catalogName}</arg>
+            <arg>${advertiserRoot}/raw-catalog/${catalogName}.header</arg>
         </java>
-        <ok to="catalog-download"/>
-        <error to="fail"/>
-    </action>
-
-    <action name="catalog-download">
-        <shell xmlns="uri:oozie:shell-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
-            <prepare>
-                <delete path="${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/raw-catalog"/>
-                <mkdir path="${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/raw-catalog"/>
-            </prepare>
-            <configuration>
-                <property>
-                    <name>mapred.job.queue.name</name>
-                    <value>${queueName}</value>
-                </property>
-            </configuration>
-            <exec>catalog-downloader.sh</exec>
-            <argument>${awsAccessKey}</argument>
-            <argument>${awsSecretKey}</argument>
-            <argument>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/raw-catalog</argument>
-            <argument>${wf:actionData('catalog-pull')['CATALOG_LOCATIONS']}</argument>
-            <argument>${wf:actionData('catalog-pull')['CATALOG_NAMES']}</argument>
-            <file>scripts/catalog-downloader.sh</file>
-        </shell>
         <ok to="parse-catalog"/>
         <error to="fail"/>
     </action>
@@ -51,7 +42,8 @@
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
-                <delete path="${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/parsed-catalog"/>
+                <delete path="${parsedCatalogDir}"/>
+                <mkdir path="${processedCatalogRoot}/"/>
             </prepare>
 
             <configuration>
@@ -69,20 +61,20 @@
                 </property>
                 <property>
                     <name>mapreduce.job.map.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.KoseiTextParserMapper</value>
+                    <value>com.kosei.adcreatorworkflow.hadoop.GoogleTextParserMapper</value>
                 </property>
                 <property>
                     <name>mapreduce.job.reduce.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.KoseiTextParserReducer</value>
+                    <value>com.kosei.adcreatorworkflow.hadoop.GoogleTextParserReducer</value>
                 </property>
                 <property>
                     <name>mapreduce.job.reduces</name>
                     <value>20</value>
                 </property>
-
+                
                 <property>
                     <name>mapreduce.job.inputformat.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.io.GoogleCatalogInputFormat</value>
+                    <value>org.apache.hadoop.mapreduce.lib.input.TextInputFormat</value>
                 </property>
                 <property>
                     <name>mapreduce.map.output.key.class</name>
@@ -106,17 +98,26 @@
                 </property>
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/raw-catalog</value>
+                    <value>${advertiserRoot}/raw-catalog/${catalogName}</value>
                 </property>
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/parsed-catalog</value>
+                    <value>${parsedCatalogDir}</value>
                 </property>
                 <property>
-                    <name>job.timestamp</name>
-                    <value>${wf:actionData('catalog-pull')['TIMESTAMP']}</value>
+                    <name>catalog.timestamp</name>
+                    <value>${timestamp}</value>
+                </property>
+                <property>
+                    <name>catalog.header.file</name>
+                    <value>${catalogName}.header</value>
+                </property>
+                <property>
+                    <name>meta.output</name>
+                    <value>${metaCatalogDir}</value>
                 </property>
             </configuration>
+            <file>${advertiserRoot}/raw-catalog/${catalogName}.header</file>
         </map-reduce>
         <ok to="crawl-catalog"/>
         <error to="fail"/>
@@ -127,7 +128,7 @@
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
-                <delete path="${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/image-catalog"/>
+                <delete path="${imageCatalogDir}"/>
             </prepare>
 
             <configuration>
@@ -167,109 +168,52 @@
 
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/parsed-catalog</value>
+                    <value>${parsedCatalogDir}</value>
                 </property>
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/image-catalog</value>
+                    <value>${imageCatalogDir}</value>
                 </property>
 
             </configuration>
         </map-reduce>
-        <ok to="archive-catalog"/>
+        <ok to="copy-to-archive"/>
         <error to="fail"/>
     </action>
 
-    <action name="archive-catalog">
-        <shell xmlns="uri:oozie:shell-action:0.1">
+    <action name="copy-to-archive">
+        <distcp xmlns="uri:oozie:distcp-action:0.1">
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
-            <configuration>
-                <property>
-                    <name>mapred.job.queue.name</name>
-                    <value>${queueName}</value>
-                </property>
-            </configuration>
-            <exec>catalog-archiver.sh</exec>
-            <argument>${awsAccessKey}</argument>
-            <argument>${awsSecretKey}</argument>
-            <argument>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/image-catalog</argument>
-            <argument>${advertisersRoot}</argument>
-            <file>scripts/catalog-archiver.sh</file>
-        </shell>
+            <prepare>
+                <delete path="${advertiserRoot}/catalog/archive/${catalogId}/${catalogName}.images"/>
+                <mkdir path="${advertiserRoot}/catalog/archive/${catalogId}/_SUCCESS"/>
+            </prepare>
+            <arg>-Dfs.s3n.awsAccessKeyId=${awsAccessKey}</arg>
+            <arg>-Dfs.s3n.awsSecretAccessKey=${awsSecretKey}</arg>
+            <arg>${imageCatalogDir}</arg>
+            <arg>${advertiserRoot}/catalog/archive/${catalogId}</arg>
+        </distcp>
         <ok to="upload-catalog-meta"/>
         <error to="fail"/>
     </action>
 
     <action name="upload-catalog-meta">
-        <map-reduce>
+        <java>
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
-
             <configuration>
-                <property>
-                    <name>mapred.mapper.new-api</name>
-                    <value>true</value>
-                </property>
-                <property>
-                    <name>mapred.reducer.new-api</name>
-                    <value>true</value>
-                </property>
                 <property>
                     <name>mapred.job.queue.name</name>
                     <value>${queueName}</value>
                 </property>
-                <property>
-                    <name>mapreduce.job.map.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.UploadProductsToCategoriesMapper</value>
-                </property>
-                <property>
-                    <name>mapreduce.job.reduce.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.UploadProductsToCategoriesReducer</value>
-                </property>
-                <property>
-                    <name>mapreduce.job.reduces</name>
-                    <value>5</value>
-                </property>
-
-                <property>
-                    <name>mapreduce.job.inputformat.class</name>
-                    <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
-                </property>
-                <property>
-                    <name>mapreduce.map.output.key.class</name>
-                    <value>org.apache.hadoop.io.Text</value>
-                </property>
-                <property>
-                    <name>mapreduce.map.output.value.class</name>
-                    <value>org.apache.hadoop.io.Text</value>
-                </property>
-                <property>
-                    <name>mapreduce.job.outputformat.class</name>
-                    <value>org.apache.hadoop.mapreduce.lib.output.NullOutputFormat</value>
-                </property>
-                <property>
-                    <name>mapreduce.job.output.key.class</name>
-                    <value>org.apache.hadoop.io.NullWritable</value>
-                </property>
-                <property>
-                    <name>mapreduce.job.output.value.class</name>
-                    <value>org.apache.hadoop.io.NullWritable</value>
-                </property>
-                <property>
-                    <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/parsed-catalog</value>
-                </property>
-                <property>
-                    <name>api.token</name>
-                    <value>${managementClientApiToken}</value>
-                </property>
-                <property>
-                    <name>base.url</name>
-                    <value>${managementClientApiEndPoint}</value>
-                </property>
             </configuration>
-        </map-reduce>
+            <main-class>com.kosei.dropwizard.management.client.cli.UploadProductsToCategories</main-class>
+            <arg>${managementClientApiEndPoint}</arg>
+            <arg>${managementClientApiToken}</arg>
+            <arg>${catalogId}</arg>
+            <arg>${metaCatalogDir}</arg>
+        </java>
         <ok to="end"/>
         <error to="fail"/>
     </action>

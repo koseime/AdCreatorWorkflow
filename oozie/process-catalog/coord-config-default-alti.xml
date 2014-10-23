@@ -1,0 +1,62 @@
+<configuration>
+
+    <property>
+        <name>nameNode</name>
+        <value>hdfs://nn-foa.s3s.altiscale.com:8020</value>
+    </property>
+    <property>
+        <name>jobTracker</name>
+        <value>rm-foa.s3s.altiscale.com:8032</value>
+    </property>
+    <property>
+        <name>queueName</name>
+        <value>default</value>
+    </property>
+    <property>
+        <name>hdfsconfig</name>
+        <value>${nameNode}</value>
+    </property>
+
+
+    <property>
+        <name>homeRoot</name>
+        <value>hdfs://nn-foa.s3s.altiscale.com:8020/shared</value>
+    </property>
+    <property>
+        <name>workflowRoot</name>
+        <value>hdfs://nn-foa.s3s.altiscale.com:8020/shared/kosei/adcreator/oozie/process-catalog</value>
+    </property>
+    <property>
+        <name>advertisersRoot</name>
+        <value>hdfs://nn-foa.s3s.altiscale.com:8020/shared/kosei/advertisers</value>
+    </property>
+
+    <property>
+        <name>oozie.use.system.libpath</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>oozie.wf.rerun.failnodes</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>managementClientApiToken</name>
+        <value>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</value>
+    </property>
+    <property>
+        <name>managementClientApiEndPoint</name>
+        <value>https://sentry.kosei.com</value>
+    </property>
+
+    <property>
+        <name>awsAccessKey</name>
+        <value>AKIAIVEJZIYPGUU4T3WQ</value>
+    </property>
+    <property>
+        <name>awsSecretKey</name>
+        <value>g+u3CR83yXLQ/zOGs7vo2v33yR+8t+53CqCfsTkG</value>
+    </property>
+
+</configuration>
