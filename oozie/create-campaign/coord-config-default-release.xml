@@ -1,0 +1,49 @@
+<configuration>
+
+    <property>
+        <name>nameNode</name>
+        <value>hdfs://hivecluster6.labs.lan:8020</value>
+    </property>
+    <property>
+        <name>jobTracker</name>
+        <value>hivecluster6.labs.lan:8032</value>
+    </property>
+    <property>
+        <name>queueName</name>
+        <value>default</value>
+    </property>
+    <property>
+        <name>hdfsconfig</name>
+        <value>${nameNode}</value>
+    </property>
+
+
+    <property>
+        <name>homeRoot</name>
+        <value>hdfs://hivecluster6.labs.lan:8020/shared</value>
+    </property>
+    <property>
+        <name>workflowRoot</name>
+        <value>hdfs://hivecluster6.labs.lan:8020/shared/kosei/adcreator/oozie/create-campaign</value>
+    </property>
+    <property>
+        <name>advertisersRoot</name>
+        <value>hdfs://hivecluster6.labs.lan:8020/shared/kosei/advertisers</value>
+    </property>
+
+    <property>
+        <name>oozie.use.system.libpath</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>ooozie.wf.rerun.failnodes</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>fontsDir</name>
+        <value>hdfs://hivecluster6.labs.lan:8020/shared/kosei/fonts</value>
+    </property>
+
+</configuration>
