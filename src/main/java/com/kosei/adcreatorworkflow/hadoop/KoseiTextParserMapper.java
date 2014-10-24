@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class KoseiTextParserMapper extends
         Mapper<Text, Text, Text, AdCreatorAssetsWritable> {
 
-    static enum ParserEnum { INPUTREC, SUCCESS }
+    static enum ParserEnum { INPUTREC, SUCCESS , OUTOFSTOCK}
 
     private String jobTimestamp = "";
 
@@ -31,8 +31,6 @@ public class KoseiTextParserMapper extends
     @Override
     public void map(Text key, Text value, Context context)
             throws IOException, InterruptedException {
-        Counter counter = context.getCounter("parsermapper", "records");
-
         String koseiCatRecord = value.toString();
         context.getCounter(ParserEnum.INPUTREC).increment(1);
 
@@ -59,6 +57,7 @@ public class KoseiTextParserMapper extends
             ad.putMeta(new Text("catalog_id"), new BytesWritable(catalogId.getBytes()));
             ad.putMeta(new Text("advertiser_id"), new BytesWritable(advertiserId.getBytes()));
             if (availability.equals("out of stock")) {
+                context.getCounter(ParserEnum.OUTOFSTOCK).increment(1);
                 ad.putMeta(new Text("category"), new BytesWritable("DELETED".getBytes()));
                 ad.putMeta(new Text("deleted"), new BytesWritable(availability.getBytes()));
             } else {
