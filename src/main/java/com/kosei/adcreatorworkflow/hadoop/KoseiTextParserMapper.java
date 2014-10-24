@@ -3,6 +3,7 @@ package com.kosei.adcreatorworkflow.hadoop;
 import com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
@@ -30,6 +31,8 @@ public class KoseiTextParserMapper extends
     @Override
     public void map(Text key, Text value, Context context)
             throws IOException, InterruptedException {
+        Counter counter = context.getCounter("parsermapper", "records");
+
         String koseiCatRecord = value.toString();
         context.getCounter(ParserEnum.INPUTREC).increment(1);
 

@@ -35,7 +35,6 @@
         <name>oozie.use.system.libpath</name>
         <value>true</value>
     </property>
-
     <property>
         <name>oozie.wf.rerun.failnodes</name>
         <value>true</value>
@@ -47,7 +46,7 @@
     </property>
     <property>
         <name>managementClientApiEndPoint</name>
-        <value>https://hivedev7:18380</value>
+        <value>http://hivedev7:18380</value>
     </property>
 
     <property>
