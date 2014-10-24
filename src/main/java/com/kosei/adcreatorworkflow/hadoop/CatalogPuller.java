@@ -6,6 +6,8 @@ import com.kosei.dropwizard.management.client.ManagementJsonClient;
 import com.kosei.dropwizard.management.client.resources.CatalogVersionPrepareJobResource;
 import com.kosei.dropwizard.management.client.resources.CatalogVersionResource;
 import io.dropwizard.jackson.Jackson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit.client.UrlConnectionClient;
 
 import java.io.File;
@@ -20,10 +22,13 @@ import java.util.Properties;
  *
  */
 public class CatalogPuller {
+    private static final Logger log = LoggerFactory.getLogger(CatalogPuller.class);
 
     public static void main(String args[]) throws IOException {
         String apiToken = args[0];
         String baseURL = args[1];
+
+        log.info("Initiating catalog pull base URL: {}, API: {}", apiToken, baseURL);
 
         String oozieJobId = System.getProperty("oozie.job.id");
         if (oozieJobId == null) { throw new RuntimeException("oozie.job.id not defined"); }
@@ -44,7 +49,9 @@ public class CatalogPuller {
 
         StringBuilder catalogLocations = new StringBuilder();
         StringBuilder catalogNames = new StringBuilder();
+
         for (JsonCatalogVersion catalogVersion : catalogVersions) {
+            log.info("Retrieved CatalogVersion {}", catalogVersion);
             if (catalogLocations.length() != 0) {
                 catalogLocations.append(",");
                 catalogNames.append(",");

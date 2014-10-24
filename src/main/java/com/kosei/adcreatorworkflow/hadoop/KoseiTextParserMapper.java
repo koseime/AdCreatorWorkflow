@@ -3,6 +3,7 @@ package com.kosei.adcreatorworkflow.hadoop;
 import com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
@@ -18,7 +19,7 @@ import java.util.logging.Logger;
 public class KoseiTextParserMapper extends
         Mapper<Text, Text, Text, AdCreatorAssetsWritable> {
 
-    static enum ParserEnum { INPUTREC, SUCCESS }
+    static enum ParserEnum { INPUTREC, SUCCESS , OUTOFSTOCK}
 
     private String jobTimestamp = "";
 
@@ -56,6 +57,7 @@ public class KoseiTextParserMapper extends
             ad.putMeta(new Text("catalog_id"), new BytesWritable(catalogId.getBytes()));
             ad.putMeta(new Text("advertiser_id"), new BytesWritable(advertiserId.getBytes()));
             if (availability.equals("out of stock")) {
+                context.getCounter(ParserEnum.OUTOFSTOCK).increment(1);
                 ad.putMeta(new Text("category"), new BytesWritable("DELETED".getBytes()));
                 ad.putMeta(new Text("deleted"), new BytesWritable(availability.getBytes()));
             } else {

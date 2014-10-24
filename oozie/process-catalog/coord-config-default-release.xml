@@ -35,7 +35,6 @@
         <name>oozie.use.system.libpath</name>
         <value>true</value>
     </property>
-
     <property>
         <name>oozie.wf.rerun.failnodes</name>
         <value>true</value>
