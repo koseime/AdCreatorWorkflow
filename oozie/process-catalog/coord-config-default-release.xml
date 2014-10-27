@@ -51,11 +51,11 @@
 
     <property>
         <name>awsAccessKey</name>
-        <value>AKIAIVEJZIYPGUU4T3WQ</value>
+        <value>AKIAJBUEAZ3FONWAW4QQ</value>
     </property>
     <property>
         <name>awsSecretKey</name>
-        <value>g+u3CR83yXLQ/zOGs7vo2v33yR+8t+53CqCfsTkG</value>
+        <value>vRy0uwV+I+Z0mVNqzWGEXCGrTKPQ5HTKx96JMn8b</value>
     </property>
 
 </configuration>
