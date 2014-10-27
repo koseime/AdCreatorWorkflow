@@ -15,6 +15,7 @@
             <main-class>com.kosei.adcreatorworkflow.hadoop.CatalogPuller</main-class>
             <arg>${managementClientApiToken}</arg>
             <arg>${managementClientApiEndPoint}</arg>
+            <capture-output/>
         </java>
         <ok to="catalog-download"/>
         <error to="fail"/>
