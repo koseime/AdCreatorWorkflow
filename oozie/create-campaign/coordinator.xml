@@ -4,8 +4,8 @@
     </controls>
     <datasets>
         <dataset name="input" frequency="1" initial-instance="${startCoordDate}" timezone="GMT">
-            <uri-template>${advertisersRoot}/${imageCatalogDir}</uri-template>
-            <done-flag>_SUCCESS</done-flag>
+            <uri-template>${advertisersRoot}/${triggerDir}</uri-template>
+            <done-flag>${triggerFile}</done-flag>
         </dataset>
     </datasets>
     <input-events>

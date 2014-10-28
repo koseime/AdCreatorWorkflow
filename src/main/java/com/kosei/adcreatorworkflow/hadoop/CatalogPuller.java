@@ -32,6 +32,7 @@ public class CatalogPuller {
 
         String oozieJobId = System.getProperty("oozie.job.id");
         if (oozieJobId == null) { throw new RuntimeException("oozie.job.id not defined"); }
+        long jobTimestamp = System.currentTimeMillis();
 
         ManagementJsonClient managementJsonClient = new ManagementJsonClient(
                 apiToken, baseURL, Jackson.newObjectMapper(), new UrlConnectionClient());
@@ -42,7 +43,7 @@ public class CatalogPuller {
         CatalogVersionResource catalogVersionResource = managementJsonClient.getCatalogVersionResource();
 
         JsonCatalogVersionPrepareJob newJob = catalogVersionPrepareJobResource.create(
-                new JsonCatalogVersionPrepareJob(-1, oozieJobId, null, null, null));
+                new JsonCatalogVersionPrepareJob(-1, oozieJobId, null, null, jobTimestamp, null));
 
         List<JsonCatalogVersion> catalogVersions =
                 catalogVersionResource.viewAllByCatalogVersionPrepareJobId(newJob.id, 0, Integer.MAX_VALUE).content;
@@ -69,7 +70,7 @@ public class CatalogPuller {
             Properties properties = new Properties();
             properties.setProperty("CATALOG_LOCATIONS", catalogLocations.toString());
             properties.setProperty("CATALOG_NAMES", catalogNames.toString());
-            properties.setProperty("TIMESTAMP", Long.toString(System.currentTimeMillis()));
+            properties.setProperty("TIMESTAMP", Long.toString(jobTimestamp));
 
             OutputStream os = new FileOutputStream(propFile);
             properties.store(os, "");
