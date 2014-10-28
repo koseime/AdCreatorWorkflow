@@ -1,19 +1,20 @@
-# argument 1: s3 access key
-# argument 2: s3 secret key
-# argument 3: processed catalogs root
-# argument 4: advertisers root
+# argument 1: processed catalogs root
+# argument 2: advertisers root
 
-ls_command="hadoop fs -ls $3"
-file_list=$(echo `eval $ls_command` | grep -o "$3[^[:space:]]*images[^[:space:]]*")
+ls_command="hadoop fs -ls $1"
+file_list=$(echo `eval $ls_command` | grep -o "$1[^[:space:]]*images-m-00000[^[:space:]]*")
 
 for file in $file_list
 do
-    filename=${file#$3"/"}
+    filename=${file#$1"/"}
     IFS="-." parts=($filename)
     advertiser_id=${parts[0]}
     catalog_id=${parts[2]}
-    dest="$4/$advertiser_id/catalog/archive/$catalog_id"
+    dest="$2/$advertiser_id/catalog/archive/$catalog_id"
+    trigger_file="${filename%images-m-00000}READY"
+    files="${file%-00000}*"    
     eval "hadoop fs -mkdir -p $dest"
-    eval "hadoop fs -mv $file $dest"
+    eval "hadoop fs -mv $files $dest"
+    eval "hadoop fs -mkdir $dest/$trigger_file"
 done
 
