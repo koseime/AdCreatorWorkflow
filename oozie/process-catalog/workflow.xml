@@ -148,10 +148,6 @@
                     <name>mapreduce.job.map.class</name>
                     <value>com.kosei.adcreatorworkflow.hadoop.ByteWritableImageCrawlerMapper</value>
                 </property>
-                <property>
-                    <name>mapreduce.job.reduces</name>
-                    <value>0</value>
-                </property>
 
                 <property>
                     <name>mapreduce.job.inputformat.class</name>
