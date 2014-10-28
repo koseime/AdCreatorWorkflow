@@ -5,7 +5,7 @@
     <datasets>
         <dataset name="input" frequency="1" initial-instance="${startCoordDate}" timezone="GMT">
             <uri-template>${advertisersRoot}/${triggerDir}</uri-template>
-            <done-flag>${triggerFile}</done-flag>
+            <done-flag></done-flag>
         </dataset>
     </datasets>
     <input-events>
