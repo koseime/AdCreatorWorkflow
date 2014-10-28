@@ -4,6 +4,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable;
 import com.kosei.proto.AdComponentsMessages.AdComponents;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -69,6 +70,11 @@ public class ByteWritableImageCrawlerMapper extends
         value.setImageBlob(new byte[0]);
         BytesWritable bw = buildAdComponentsBytesWritable(value, AdComponents.Status.IMAGE_RETRIEVAL_FAILURE);
         out.write(NullWritable.get(), bw, "failed");
+    }
+
+    @Override
+    public void cleanup(Context context) throws IOException, InterruptedException {
+        out.close();
     }
 
     private String getFileName(AdCreatorAssetsWritable entry) {
