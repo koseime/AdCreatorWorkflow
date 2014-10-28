@@ -192,8 +192,6 @@
                 </property>
             </configuration>
             <exec>catalog-archiver.sh</exec>
-            <argument>${awsAccessKey}</argument>
-            <argument>${awsSecretKey}</argument>
             <argument>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/image-catalog</argument>
             <argument>${advertisersRoot}</argument>
             <file>scripts/catalog-archiver.sh</file>
