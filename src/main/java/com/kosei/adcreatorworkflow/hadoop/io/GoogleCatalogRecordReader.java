@@ -115,29 +115,37 @@ public class GoogleCatalogRecordReader extends RecordReader<Text, Text> {
         }
         key.set("a");
 
-        Text rawValue = new Text();
-        int newSize = 0;
-        while (pos < end) {
-            newSize = in.readLine(rawValue, maxLineLength,
-                    Math.max((int)Math.min(Integer.MAX_VALUE, end - pos), maxLineLength));
-            pos += newSize;
-            if (newSize < maxLineLength) { break; }
-            LOG.info("Skipped line of size " + newSize + " at pos " +
-                    (pos - newSize));
-        }
-
-        if (newSize == 0) {
-            key = null;
-            value = null;
-            return false;
-        } else {
-            GoogleProductItem googleProductItem = googleProductItemParser.parse(rawValue.toString());
-            if (value == null) {
-                value = new Text();
+        while (true) {
+            Text rawValue = new Text();
+            int newSize = 0;
+            while (pos < end) {
+                newSize = in.readLine(rawValue, maxLineLength,
+                        Math.max((int) Math.min(Integer.MAX_VALUE, end - pos), maxLineLength));
+                pos += newSize;
+                if (newSize < maxLineLength) {
+                    break;
+                }
+                LOG.info("Skipped line of size " + newSize + " at pos " +
+                        (pos - newSize));
             }
-            value.clear();
-            value.set(KoseiProductItem.parse(googleProductItem, timestamp, catalogId, advertiserId).toString());
-            return true;
+
+            if (newSize == 0) {
+                key = null;
+                value = null;
+                return false;
+            } else {
+                GoogleProductItem googleProductItem = googleProductItemParser.parse(rawValue.toString());
+                if (googleProductItem == null) {
+                    continue;
+                }
+
+                if (value == null) {
+                    value = new Text();
+                }
+                value.clear();
+                value.set(KoseiProductItem.parse(googleProductItem, timestamp, catalogId, advertiserId).toString());
+                return true;
+            }
         }
     }
 

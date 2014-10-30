@@ -54,14 +54,12 @@ public class CatalogPuller {
 
         for (JsonCatalogVersion catalogVersion : catalogVersions) {
             log.info("Retrieved CatalogVersion {}", catalogVersion);
-            if (catalogLocations.length() != 0) {
-                catalogLocations.append(",");
-                catalogNames.append(",");
-            }
             String catalogName = catalogVersion.advertiserId + "-" + catalogVersion.timestamp + "-" +
                     catalogVersion.catalogId + "-" + catalogVersion.id + ".raw_catalog";
             catalogLocations.append(catalogVersion.catalogLocation);
+            catalogLocations.append("\n");
             catalogNames.append(catalogName);
+            catalogNames.append("\n");
         }
 
         basePath += "/" + Long.toString(jobTimestamp);

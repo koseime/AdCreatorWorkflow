@@ -57,20 +57,25 @@ public class GoogleProductItemParser {
     }
 
     public GoogleProductItem parse(String in) {
-        if (header.isEmpty()) {
+        if (header == null || header.isEmpty()) {
             return GoogleProductItem.fromParse(in);
         }
-        // split will not include empty strings at the end, we add non-empty string at the end as a hack
-        ArrayList<String> s = new ArrayList<>(Arrays.asList((in + "\t$").split("\t")));
-        s.set(s.size() - 1, "");
-        GoogleProductItem gpi = new GoogleProductItem();
-        gpi.setId(s.get(idToIndex[0]));
-        gpi.setImageLink(s.get(idToIndex[1]));
-        gpi.setAdditionalImageLink(s.get(idToIndex[2]));
-        gpi.setTitle(s.get(idToIndex[3]));
-        gpi.setDescription(s.get(idToIndex[4]));
-        gpi.setGoogleProductCategory(s.get(idToIndex[5]));
-        gpi.setAvailability(s.get(idToIndex[6]));
-        return gpi;
+
+        try {
+            // split will not include empty strings at the end, we add non-empty string at the end as a hack
+            ArrayList<String> s = new ArrayList<>(Arrays.asList((in + "\t$").split("\t")));
+            s.set(s.size() - 1, "");
+            GoogleProductItem gpi = new GoogleProductItem();
+            gpi.setId(s.get(idToIndex[0]));
+            gpi.setImageLink(s.get(idToIndex[1]));
+            gpi.setAdditionalImageLink(s.get(idToIndex[2]));
+            gpi.setTitle(s.get(idToIndex[3]));
+            gpi.setDescription(s.get(idToIndex[4]));
+            gpi.setGoogleProductCategory(s.get(idToIndex[5]));
+            gpi.setAvailability(s.get(idToIndex[6]));
+            return gpi;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

@@ -36,33 +36,36 @@ public class GoogleProductItem {
     public GoogleProductItem() {}
 
     public static GoogleProductItem fromParse(String in) {
-        String s[] = in.split("\t");
-        GoogleProductItem i = new GoogleProductItem();
-        i.setTitle(s[0]);
-        i.setLink(s[1]);
-        i.setDescription(s[2]);
-        i.setId(s[3]);
-        i.setCondition(s[4]);
-        i.setPrice(s[5]);
-        i.setAvailability(s[6]);
-        i.setImageLink(s[7]);
-        i.setShipping(s[8]);
-        i.setWeight(s[9]);
-        i.setGtin(s[10]);
-        i.setBrand(s[11]);
-        i.setMpn(s[12]);
-        i.setGoogleProductCategory(s[13]);
-        i.setProductType(s[14]);
-        i.setAdditionalImageLink(s[15]);
-        i.setColor(s[16]);
-        i.setSize(s[17]);
-        i.setGender(s[18]);
-        i.setAgeGroup(s[19]);
-        i.setItemGroupId(s[20]);
-        i.setSalePrice(s[21]);
-        i.setSalePriceEffectiveDate(s[22]);
-
-        return i;
+        try {
+            String s[] = in.split("\t");
+            GoogleProductItem i = new GoogleProductItem();
+            i.setTitle(s[0]);
+            i.setLink(s[1]);
+            i.setDescription(s[2]);
+            i.setId(s[3]);
+            i.setCondition(s[4]);
+            i.setPrice(s[5]);
+            i.setAvailability(s[6]);
+            i.setImageLink(s[7]);
+            i.setShipping(s[8]);
+            i.setWeight(s[9]);
+            i.setGtin(s[10]);
+            i.setBrand(s[11]);
+            i.setMpn(s[12]);
+            i.setGoogleProductCategory(s[13]);
+            i.setProductType(s[14]);
+            i.setAdditionalImageLink(s[15]);
+            i.setColor(s[16]);
+            i.setSize(s[17]);
+            i.setGender(s[18]);
+            i.setAgeGroup(s[19]);
+            i.setItemGroupId(s[20]);
+            i.setSalePrice(s[21]);
+            i.setSalePriceEffectiveDate(s[22]);
+            return i;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public String getTitle() {
