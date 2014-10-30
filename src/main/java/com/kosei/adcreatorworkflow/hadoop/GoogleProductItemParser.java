@@ -24,6 +24,7 @@ public class GoogleProductItemParser {
 
     private int idToIndex[] = null;
     private String header = null;
+    private int numColumns;
 
     public GoogleProductItemParser(String header) {
         ImmutableMap.Builder<String, Integer> columnNameToIdBuilder = new ImmutableMap.Builder<>();
@@ -35,6 +36,7 @@ public class GoogleProductItemParser {
         this.header = header;
 
         String s[] = header.split("\t");
+        numColumns = s.length;
         idToIndex = new int[GoogleProductItem.NUM_PRODUCT_ITEM_ENTRIES];
         Arrays.fill(idToIndex, s.length);
         for (int i = 0; i < s.length; i++) {
@@ -64,6 +66,9 @@ public class GoogleProductItemParser {
         try {
             // split will not include empty strings at the end, we add non-empty string at the end as a hack
             ArrayList<String> s = new ArrayList<>(Arrays.asList((in + "\t$").split("\t")));
+            if (s.size() - 1 != numColumns) {
+                return null;
+            }
             s.set(s.size() - 1, "");
             GoogleProductItem gpi = new GoogleProductItem();
             gpi.setId(s.get(idToIndex[0]));

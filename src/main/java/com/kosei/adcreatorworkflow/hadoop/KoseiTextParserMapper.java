@@ -1,6 +1,7 @@
 package com.kosei.adcreatorworkflow.hadoop;
 
 import com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable;
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Counter;
@@ -47,7 +48,7 @@ public class KoseiTextParserMapper extends
             String catalogId = productItem.getCatalogId();
             String advertiserId = productItem.getAdvertiserId();
 
-            if (productId.isEmpty()) { return; }
+            if (productId.isEmpty() || !StringUtils.isAlphanumeric(productId)) { return; }
             AdCreatorAssetsWritable ad = new AdCreatorAssetsWritable(productId,
                     imageURIs, AdCreatorAssetsWritable.STATUS_RAW, null, productDesc, longProductDesc);
 
