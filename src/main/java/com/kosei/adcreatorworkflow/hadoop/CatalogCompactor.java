@@ -35,16 +35,19 @@ public class CatalogCompactor {
             String filename = advertiserList[i].getPath().getName();
             if (StringUtils.isNumeric(filename)) {
                 Path archivePath = new Path(advertiserList[i].getPath().toString() + "/catalog/archive");
+                FileStatus[] archiveList = null;
                 try {
-                    FileStatus[] archiveList = dfs.listStatus(archivePath);
-                    for (int j = 0; j < archiveList.length; j++) {
-                        String catalogPath = archiveList[j].getPath().getName();
-                        if (StringUtils.isNumeric(catalogPath)) {
-                            System.out.println(archiveList[j].getPath().toString());
-                            runJob(archiveList[j].getPath().toString());
-                        }
+                    archiveList = dfs.listStatus(archivePath);
+                } catch (Exception e) {
+                    archiveList = new FileStatus[0];
+                }
+                for (int j = 0; j < archiveList.length; j++) {
+                    String catalogPath = archiveList[j].getPath().getName();
+                    if (StringUtils.isNumeric(catalogPath)) {
+                        System.out.println(archiveList[j].getPath().toString());
+                        runJob(archiveList[j].getPath().toString());
                     }
-                } catch (Exception e) {}
+                }
             }
         }
     }
@@ -82,7 +85,8 @@ public class CatalogCompactor {
         }
     }
 
-    private static long[] getArchiveRange(String baseDirString, FileSystem dfs) {
+    private static long[] getArchiveRange(String baseDirString, FileSystem dfs)
+            throws IOException {
         Path rollupDir = new Path(baseDirString + "/rollup");
         long latestArchivedTimestamp = 0;
         try {
@@ -98,19 +102,17 @@ public class CatalogCompactor {
 
         Path baseDir = new Path(baseDirString);
         long latestTimestamp = 0;
-        try {
-            FileStatus[] status = dfs.listStatus(baseDir);
-            for (int i = 0; i < status.length; i++) {
-                String filename = status[i].getPath().getName();
-                if (filename.endsWith("READY")) {
-                    String parts[] = filename.split("-");
-                    Long timestamp = Long.parseLong(parts[1]);
-                    if (timestamp > latestArchivedTimestamp && timestamp > latestTimestamp) {
-                        latestTimestamp = timestamp;
-                    }
+        FileStatus[] status = dfs.listStatus(baseDir);
+        for (int i = 0; i < status.length; i++) {
+            String filename = status[i].getPath().getName();
+            if (filename.endsWith("READY")) {
+                String parts[] = filename.split("-");
+                Long timestamp = Long.parseLong(parts[1]);
+                if (timestamp > latestArchivedTimestamp && timestamp > latestTimestamp) {
+                    latestTimestamp = timestamp;
                 }
             }
-        } catch (Exception e) { }
+        }
 
         return new long[] {latestArchivedTimestamp, latestTimestamp};
     }
