@@ -2,11 +2,11 @@
 
     <property>
         <name>nameNode</name>
-        <value>hdfs://nn-foa.s3s.altiscale.com:8020</value>
+        <value>hdfs://hivecluster6.labs.lan:8020</value>
     </property>
     <property>
         <name>jobTracker</name>
-        <value>rm-foa.s3s.altiscale.com:8032</value>
+        <value>hivecluster6.labs.lan:8032</value>
     </property>
     <property>
         <name>queueName</name>
@@ -20,15 +20,11 @@
 
     <property>
         <name>homeRoot</name>
-        <value>hdfs://nn-foa.s3s.altiscale.com:8020/shared</value>
-    </property>
-    <property>
-        <name>workflowRoot</name>
-        <value>hdfs://nn-foa.s3s.altiscale.com:8020/shared/kosei/adcreator/oozie/process-catalog</value>
+        <value>hdfs://hivecluster6.labs.lan:8020/shared</value>
     </property>
     <property>
         <name>advertisersRoot</name>
-        <value>hdfs://nn-foa.s3s.altiscale.com:8020/shared/kosei/advertisers</value>
+        <value>hdfs://hivecluster6.labs.lan:8020/shared/kosei/advertisers</value>
     </property>
 
     <property>
@@ -36,9 +32,4 @@
         <value>true</value>
     </property>
 
-    <property>
-        <name>ooozie.wf.rerun.failnodes</name>
-        <value>true</value>
-    </property>
 </configuration>
-

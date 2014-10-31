@@ -1,0 +1,26 @@
+<configuration>
+    <property>
+        <name>workflowRoot</name>
+        <value>hdfs://nn-foa.s3s.altiscale.com:8020/shared/kosei/adcreator/oozie/compact-catalog</value>
+    </property>
+
+    <property>
+        <name>user.name</name>
+        <value>kosei_lance</value>
+    </property>
+
+    <property>
+        <name>oozie.coord.application.path</name>
+        <value>${workflowRoot}/coordinator.xml</value>
+    </property>
+
+    <property>
+        <name>startCoordDate</name>
+        <value>2014-09-08T17:37Z</value>
+    </property>
+
+    <property>
+        <name>endCoordDate</name>
+        <value>2014-09-09T17:32Z</value>
+    </property>
+</configuration>

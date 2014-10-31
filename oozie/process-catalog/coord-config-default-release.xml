@@ -40,22 +40,4 @@
         <value>true</value>
     </property>
 
-    <property>
-        <name>managementClientApiToken</name>
-        <value>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</value>
-    </property>
-    <property>
-        <name>managementClientApiEndPoint</name>
-        <value>http://hivedev7:18380</value>
-    </property>
-
-    <property>
-        <name>awsAccessKey</name>
-        <value>AKIAJBUEAZ3FONWAW4QQ</value>
-    </property>
-    <property>
-        <name>awsSecretKey</name>
-        <value>vRy0uwV+I+Z0mVNqzWGEXCGrTKPQ5HTKx96JMn8b</value>
-    </property>
-
 </configuration>
