@@ -1,80 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow-app xmlns="uri:oozie:workflow:0.2" name="create-campaign-wf">
-    <start to="catalog-compactor"/>
+    <start to="compact-catalog"/>
 
-    <action name='catalog-compactor'>
-        <map-reduce>
+    <action name="compact-catalog">
+        <java>
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
                 <delete path="${compactedCatalogDir}"/>
+                <mkdir path="${campaignRoot}"/>
             </prepare>
-
             <configuration>
-                <property>
-                    <name>mapred.mapper.new-api</name>
-                    <value>true</value>
-                </property>
-                <property>
-                    <name>mapred.reducer.new-api</name>
-                    <value>true</value>
-                </property>
                 <property>
                     <name>mapred.job.queue.name</name>
                     <value>${queueName}</value>
                 </property>
-                <property>
-                    <name>mapreduce.job.map.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.CatalogCompactorMapper</value>
-                </property>
-                <property>
-                    <name>mapreduce.job.reduce.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.CatalogCompactorReducer</value>
-                </property>
-                <property>
-                    <name>mapreduce.job.reduces</name>
-                    <value>20</value>
-                </property>
-
-                <property>
-                    <name>mapreduce.job.inputformat.class</name>
-                    <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
-                </property>
-                <property>
-                    <name>mapreduce.map.output.key.class</name>
-                    <value>org.apache.hadoop.io.Text</value>
-                </property>
-                <property>
-                    <name>mapreduce.map.output.value.class</name>
-                    <value>org.apache.hadoop.io.BytesWritable</value>
-                </property>
-                <property>
-                    <name>mapreduce.job.outputformat.class</name>
-                    <value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</value>
-                </property>
-                <property>
-                    <name>mapreduce.job.output.key.class</name>
-                    <value>org.apache.hadoop.io.NullWritable</value>
-                </property>
-                <property>
-                    <name>mapreduce.job.output.value.class</name>
-                    <value>org.apache.hadoop.io.BytesWritable</value>
-                </property>
-                <property>
-                    <name>mapreduce.input.fileinputformat.input.dir.recursive</name>
-                    <value>true</value>
-                </property>
-                <property>
-                    <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${advertisersRoot}/${imageCatalogDir}</value>
-                </property>
-                <property>
-                    <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${compactedCatalogDir}</value>
-                </property>
-
             </configuration>
-        </map-reduce>
+            <main-class>com.kosei.adcreatorworkflow.hadoop.InputCollector</main-class>
+            <arg>${advertisersRoot}/${imageCatalogDir}</arg>
+            <arg>${compactedCatalogDir}</arg>
+            <arg>${jobType}</arg>
+        </java>
         <ok to="download-resource"/>
         <error to="fail"/>
     </action>
@@ -102,7 +48,6 @@
             <name-node>${nameNode}</name-node>
             <prepare>
                 <delete path="${campaignImageDir}"/>
-                <mkdir path="${campaignRoot}"/>
             </prepare>
             <pipes>
                 <inputformat>org.apache.hadoop.mapred.SequenceFileInputFormat</inputformat>

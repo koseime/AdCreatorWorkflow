@@ -36,10 +36,11 @@ public class InputCollector {
         Job job = new Job(conf, "InputCollector:" + input);
 
 
-        if (type.equals("new_catalog")) {
+        if (type.equals("NEW_CATALOG")) {
             FileInputFormat.setInputPaths(job, input);
-        } else if (type.equals("new_campaign")) {
+        } else if (type.equals("NEW_CAMPAIGN")) {
             FileInputFormat.setInputPaths(job, constructInputPaths(input, dfs));
+            FileInputFormat.setInputDirRecursive(job, true);
         } else {
             throw new RuntimeException("Workflow type not specified");
         }
@@ -47,6 +48,8 @@ public class InputCollector {
         job.setJarByClass(InputCollector.class);
         job.setMapperClass(CatalogCompactorMapper.class);
         job.setReducerClass(CatalogCompactorReducer.class);
+        job.setNumReduceTasks(20);
+
         job.setInputFormatClass(SequenceFileInputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(BytesWritable.class);
@@ -56,7 +59,7 @@ public class InputCollector {
 
         FileOutputFormat.setOutputPath(job, outPath);
 
-        job.waitForCompletion(true);
+        if (!job.waitForCompletion(true)) { throw new RuntimeException("Job failed"); }
     }
 
     private String constructInputPaths(String baseDirString, FileSystem dfs) throws IOException {
