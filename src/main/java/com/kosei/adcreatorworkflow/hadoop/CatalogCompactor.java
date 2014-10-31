@@ -123,13 +123,13 @@ public class CatalogCompactor {
         FileStatus[] status = dfs.listStatus(baseDir);
         for (int i = 0; i < status.length; i++) {
             String filename = status[i].getPath().getName();
-            if (filename.equals("rollup")) {
-                continue;
-            }
-            String parts[] = filename.split("-");
-            Long timestamp = Long.parseLong(parts[1]);
-            if (timestamp <= latestArchivedTimestamp) {
-                dfs.delete(status[i].getPath(), true);
+            String parts[] = FilenameUtils.removeExtension(filename).split("-");
+            if (parts.length == 3 && StringUtils.isNumeric(parts[0]) && StringUtils.isNumeric(parts[1]) &&
+                    StringUtils.isNumeric(parts[2])) {
+                Long timestamp = Long.parseLong(parts[1]);
+                if (timestamp <= latestArchivedTimestamp) {
+                    dfs.delete(status[i].getPath(), true);
+                }
             }
         }
     }
