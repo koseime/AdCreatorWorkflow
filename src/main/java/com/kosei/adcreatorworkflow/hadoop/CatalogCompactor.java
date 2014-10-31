@@ -81,7 +81,7 @@ public class CatalogCompactor {
 
             FileOutputFormat.setOutputPath(job, outPath);
 
-            job.waitForCompletion(true);
+            if(!job.waitForCompletion(true)) { throw new RuntimeException("Job failed: " + baseDir); }
         }
     }
 
