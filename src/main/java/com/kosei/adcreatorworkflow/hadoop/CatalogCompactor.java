@@ -57,6 +57,7 @@ public class CatalogCompactor {
 
         long[] archiveRange = getArchiveRange(baseDir, dfs);
         removePreviouslyArchived(baseDir, archiveRange[0], dfs);
+        System.out.println("Archive range: " + archiveRange[0] + " - " + archiveRange[1]);
         if (archiveRange[1] > 0) {
             FileInputFormat.setInputPaths(job, constructInputPaths(baseDir, archiveRange, dfs));
             FileInputFormat.setInputDirRecursive(job, true);
@@ -146,6 +147,7 @@ public class CatalogCompactor {
                 Long timestamp = Long.parseLong(parts[1]);
                 if (timestamp > archiveRange[0] && timestamp <= archiveRange[1]) {
                     if (inputPath.length() != 0) { inputPath.append(","); }
+                    System.out.println(FilenameUtils.removeExtension(fullPath) + ".images*");
                     inputPath.append(FilenameUtils.removeExtension(fullPath));
                     inputPath.append(".images*");
                 }
