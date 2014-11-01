@@ -21,7 +21,7 @@ import java.io.IOException;
  *
  */
 public class InputCollector {
-    public void main(String args[]) throws IOException, ClassNotFoundException, InterruptedException {
+    public static void main(String args[]) throws IOException, ClassNotFoundException, InterruptedException {
         String input = args[0];
         String output = args[1];
         String type = args[2];
@@ -64,7 +64,7 @@ public class InputCollector {
         if (!job.waitForCompletion(true)) { throw new RuntimeException("Job failed"); }
     }
 
-    private String constructInputPaths(String baseDirString, FileSystem dfs) throws IOException {
+    private static String constructInputPaths(String baseDirString, FileSystem dfs) throws IOException {
         Path baseDir = new Path(baseDirString);
         Path rollupDir = new Path(baseDirString + "/rollup");
         StringBuilder inputPath = new StringBuilder();
