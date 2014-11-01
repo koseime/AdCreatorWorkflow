@@ -39,7 +39,9 @@ public class InputCollector {
         if (type.equals("NEW_CATALOG")) {
             FileInputFormat.setInputPaths(job, input);
         } else if (type.equals("NEW_CAMPAIGN")) {
-            FileInputFormat.setInputPaths(job, constructInputPaths(input, dfs));
+            String inputPaths = constructInputPaths(input, dfs);
+            if (inputPaths.isEmpty()) { return; }
+            FileInputFormat.setInputPaths(job, inputPaths);
             FileInputFormat.setInputDirRecursive(job, true);
         } else {
             throw new RuntimeException("Workflow type not specified");
