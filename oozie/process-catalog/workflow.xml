@@ -25,7 +25,7 @@
     <decision name="check-new-catalogs">
         <switch>
             <case to="catalog-download">
-                ${fs:exists(${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/catalog_names.txt)=="true"}
+                ${fs:exists(concat(concat(concat(advertisersRoot,'/catalogs/'),wf:actionData('catalog-pull')['TIMESTAMP']),'/catalog_locations.txt'))=="true"}
             </case>
             <default to="end"/>
         </switch>
