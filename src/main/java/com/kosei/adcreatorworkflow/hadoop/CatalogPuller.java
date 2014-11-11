@@ -67,15 +67,19 @@ public class CatalogPuller {
         FileSystem hdfs = FileSystem.get(baseDir.toUri(), new Configuration());
         hdfs.mkdirs(baseDir);
 
-        Path catalogLocationsFile = new Path(basePath + "/catalog_locations.txt");
-        BufferedWriter br = new BufferedWriter(new OutputStreamWriter(hdfs.create(catalogLocationsFile)));
-        br.write(catalogLocations.toString());
-        br.close();
+        if (catalogLocations.length() > 0) {
+            Path catalogLocationsFile = new Path(basePath + "/catalog_locations.txt");
+            BufferedWriter
+                br =
+                new BufferedWriter(new OutputStreamWriter(hdfs.create(catalogLocationsFile)));
+            br.write(catalogLocations.toString());
+            br.close();
 
-        Path catalogNamesFile = new Path(basePath + "/catalog_names.txt");
-        br = new BufferedWriter(new OutputStreamWriter(hdfs.create(catalogNamesFile)));
-        br.write(catalogNames.toString());
-        br.close();
+            Path catalogNamesFile = new Path(basePath + "/catalog_names.txt");
+            br = new BufferedWriter(new OutputStreamWriter(hdfs.create(catalogNamesFile)));
+            br.write(catalogNames.toString());
+            br.close();
+        }
 
         String propertiesFile = System.getProperty("oozie.action.output.properties");
         if (propertiesFile != null) {

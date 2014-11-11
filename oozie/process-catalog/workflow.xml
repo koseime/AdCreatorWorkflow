@@ -18,9 +18,18 @@
             <arg>${advertisersRoot}/catalogs</arg>
             <capture-output/>
         </java>
-        <ok to="catalog-download"/>
+        <ok to="check-new-catalogs"/>
         <error to="fail"/>
     </action>
+
+    <decision name="check-new-catalogs">
+        <switch>
+            <case to="catalog-download">
+                ${fs:exists(${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/catalog_names.txt)=="true"}
+            </case>
+            <default to="end"/>
+        </switch>
+    </decision>
 
     <action name="catalog-download">
         <shell xmlns="uri:oozie:shell-action:0.1">
