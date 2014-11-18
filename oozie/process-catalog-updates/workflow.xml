@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow-app xmlns="uri:oozie:workflow:0.2" name="process-catalog-wf">
+    <start to="fetch-catalog-updates"/>
+    <action name="setup">
+        <fs>
+            <delete path="${jobWorkInProgressRoot}"/>
+            <mkdir path="${jobWorkInProgressRoot}"/>
+        </fs>
+        <ok to="fetch-catalog-updates"/>
+        <error to="fail"/>
+    </action>
+    <action name='fetch-catalog-updates'>
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${catalogVersionApiOutput}"/>
+                <mkdir path="${catalogVersionApiOutput}"/>
+            </prepare>
+
+            <configuration>
+                <property>
+                    <name>mapred.mapper.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.reducer.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.map.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.catalogs.FetchCatalogUpdatesMapper</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.reduce.class</name>
+                    <value>org.apache.hadoop.mapred.lib.IdentityReducer</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>20</value> <!-- no reducers for this job -->
+                </property>
+                <property>
+                    <name>mapreduce.job.inputformat.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.catalogs.data.NullInputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.map.output.key.class</name>
+                    <value>org.apache.hadoop.io.LongWritable</value> <!-- the catalog version id -->
+                </property>
+                <property>
+                    <name>mapreduce.map.output.value.class</name>
+                    <value>org.apache.hadoop.io.BytesWritable</value> <!-- the catalog version json from manager -->
+                </property>
+                <property>
+                    <name>mapreduce.job.outputformat.class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.key.class</name>
+                    <value>org.apache.hadoop.io.LongWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.value.class</name>
+                    <value>org.apache.hadoop.io.BytesWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${catalogVersionApiOutput}</value>
+                </property>
+                <property>
+                    <name>managementClientApiToken</name>
+                    <value>${managementClientApiToken}</value>
+                </property>
+                <property>
+                    <name>managementClientApiEndPoint</name>
+                    <value>${managementClientApiEndPoint}</value>
+                </property>
+            </configuration>
+        </map-reduce>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>Failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+
+    <end name="end"/>
+
+</workflow-app>

@@ -1,0 +1,22 @@
+{
+  "namespace": "com.kosei.avro.catalogs",
+  "type": "record",
+  "name": "CatalogVersion",
+  "fields": [
+    {"name": "id", "type": "string"},
+    {"name": "advertiserId", "type": "string"},
+    {"name": "deviceIdType", "type": "string"},
+    {"name": "deviceModel", "type": ["null", "string"], "default": null},
+    {"name": "deviceOs", "type": ["null", "string"], "default": null},
+    {"name": "deviceOsVersion", "type": ["null", "string"], "default": null},
+    {"name": "deepForestCreativeId", "type": "string"},
+    {"name": "userId", "type": ["null", "string"], "default": null},
+    {"name": "advertiserId", "type": ["null", "long"], "default": null},
+    {"name": "campaignId", "type": ["null", "long"], "default": null},
+    {"name": "mobileApplicationId", "type": ["null", "long"], "default": null},
+    {"name": "productId", "type": ["null", "string"], "default": null},
+    {"name": "deepLink", "type": ["null", "string"], "default": null},
+    {"name": "referralId", "type": "string"},
+    {"name": "timestamp", "type": ["null", "long"], "default": null}
+  ]
+}

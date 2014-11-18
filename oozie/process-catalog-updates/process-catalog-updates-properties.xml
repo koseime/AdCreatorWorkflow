@@ -1,12 +1,22 @@
 <configuration>
     <property>
         <name>environmentHdfsRoot</name>
-        <value>hdfs://dell3.hessinteractive.local:8020/shared/kosei/</value>
+        <value>hdfs://dell3.hessinteractive.local:8020/shared/kosei-local/</value>
     </property>
 
     <property>
-        <name>workflowRoot</name>
-        <value>hdfs://nn-foa.s3s.altiscale.com:8020/shared/kosei/adcreator/oozie/process-catalog</value>
+        <name>jobWorkInProgressRoot</name>
+        <value>${environmentHdfsRoot}/oozie/fetch-catalogs</value>
+    </property>
+
+    <property>
+        <name>jobWorkInProgressRoot</name>
+        <value>${environmentHdfsRoot}/oozie/fetch-catalogs</value>
+    </property>
+
+    <property>
+        <name>catalogVersionApiOutput</name>
+        <value>${jobWorkInProgressRoot}/CatalogVersions</value>
     </property>
 
     <property>
@@ -29,7 +39,7 @@
 
     <property>
         <name>user.name</name>
-        <value>kosei_lance</value>
+        <value>kosei_local</value>
     </property>
 
     <property>
