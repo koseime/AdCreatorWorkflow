@@ -20,7 +20,7 @@ ssh -i $KEYFILE $NAMENODE_UNIXUSER@$NAMENODE_HOST 'rm -rf ~/hadoop ; mkdir ~/had
 scp -i $KEYFILE  build/libs/ad-creator-workflow-*-all.jar "$NAMENODE_UNIXUSER@$NAMENODE_HOST:~/hadoop/ad-creator-workflow.jar"
 
 # Step 1 - get catalog updates
- ssh -i $KEYFILE $NAMENODE_UNIXUSER@$NAMENODE_HOST "cd ~/hadoop ; HADOOP_CLASSPATH=ad-creator-workflow.jar HADOOP_USER_NAME=jonathan hadoop com.kosei.adcreatorworkflow.hadoop.catalogs.FetchCatalogUpdates $HDFS_BASEDIR" || die "Failed FetchCatalogUpdates"
+ssh -i $KEYFILE $NAMENODE_UNIXUSER@$NAMENODE_HOST "cd ~/hadoop ; HADOOP_CLASSPATH=ad-creator-workflow.jar HADOOP_USER_NAME=jonathan hadoop com.kosei.adcreatorworkflow.hadoop.catalogs.FetchCatalogUpdates $HDFS_BASEDIR" || die "Failed FetchCatalogUpdates"
 
 # Step 2 - download files from s3
 ssh -i $KEYFILE $NAMENODE_UNIXUSER@$NAMENODE_HOST "cd ~/hadoop ; HADOOP_CLASSPATH=ad-creator-workflow.jar HADOOP_USER_NAME=jonathan hadoop com.kosei.adcreatorworkflow.hadoop.catalogs.ParseCatalogs $HDFS_BASEDIR" || die "Failed ParseCatalogs"
