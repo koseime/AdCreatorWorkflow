@@ -1,0 +1,50 @@
+<configuration>
+    <property>
+        <name>user.name</name>
+        <value>@hadoopUser@</value>
+    </property>
+    <property>
+        <name>oozie.coord.application.path</name>
+        <value>@jobRoot@</value>
+    </property>
+    <property>
+        <name>nameNode</name>
+        <value>@defaultFS@</value>
+    </property>
+    <property>
+        <name>jobTracker</name>
+        <value>@jobTracker@</value>
+    </property>
+    <property>
+        <name>queueName</name>
+        <value>default</value>
+    </property>
+    <property>
+        <name>hdfsconfig</name>
+        <value>${nameNode}</value>
+    </property>
+
+
+    <property>
+        <name>environmentRoot</name>
+        <value>@environmentRoot@</value>
+    </property>
+    <property>
+        <name>workflowRoot</name>
+        <value>@jobRoot@</value>
+    </property>
+    <property>
+        <name>advertisersRoot</name>
+        <value>${environmentRoot}/advertisers</value>
+    </property>
+
+    <property>
+        <name>oozie.use.system.libpath</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>oozie.wf.rerun.failnodes</name>
+        <value>true</value>
+    </property>
+
+</configuration>

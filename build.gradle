@@ -4,9 +4,14 @@ apply plugin: 'distribution'
 
 buildscript {
     apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-buildscript.gradle", to: buildscript
-    dependencies { 
+    repositories { // for dataops dependencies
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
         classpath 'ws.antonov.gradle.plugins:gradle-plugin-protobuf:0.9.1'
-    }    
+        classpath group: 'com.kosei.dataops', name: 'gradle-dataops-plugin', version: '0.2-SNAPSHOT' // for hdfs copy stuff
+    }
 }
 
 apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-base.gradle"
@@ -83,5 +88,148 @@ shadowJar {
     dependencies {
         exclude(dependency('org.apache.hadoop:*'))
         exclude(dependency('ch.qos.logback:*'))
+    }
+}
+
+
+// Begin build script for oozie job
+import org.apache.tools.ant.filters.ReplaceTokens
+import org.apache.commons.io.IOUtils;
+
+project("ooziejobs:fetch-catalog-updates") {
+    apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-base.gradle"
+    apply plugin: 'com.kosei.dataops'
+    apply plugin: 'java'
+    dependencies {
+        compile(
+                'com.kosei.services:management-client:0.69',
+                'org.apache.hadoop:hadoop-common:2.2.0',
+                'org.apache.hadoop:hadoop-client:2.2.0',
+                'org.apache.hbase:hbase-common:0.98.6-hadoop2',
+                'org.apache.hbase:hbase-client:0.98.6-hadoop2',
+                'org.apache.hbase:hbase-protocol:0.98.6-hadoop2',
+                'org.apache.hbase:hbase-server:0.98.6-hadoop2',
+                'org.jdom:jdom:1.1.3',
+                'com.google.protobuf:protobuf-java:2.5.0',
+                'com.googlecode.json-simple:json-simple:1.1.1',
+                'org.slf4j:slf4j-api:1.7.7',
+                'org.slf4j:slf4j-log4j12:1.7.7'
+        )
+    }
+
+    def destDir = "/user/jonathan/oozie/${project.name}"
+    def workflowXmlPath = destDir+"/workflow.xml"
+    def coordinatorXmlPath = destDir+"/coordinator.xml"
+    def replaceTokens = [];
+
+    def distSpec =  project.copySpec {
+
+            into("lib") {
+                from(jar)
+                from(project.configurations.runtime)
+            }
+            into("") {
+                from(project.file("src/main/job"))
+                filter(ReplaceTokens, tokens: replaceTokens)
+            }
+        }
+
+    defineHadoopEnvironments << {
+        addEnvironment("hess") {
+            defaultFS = "hdfs://dell3.hessinteractive.local:8020"
+            hadoopUser = "jonathan"
+            jobTracker = "dell3.hessinteractive.local:8032"
+            oozieURL = "http://dell3.hessinteractive.local:11000/oozie"
+            hbaseZookeeperQuorum =
+                    "dell3.hessinteractive.local,dell2.hessinteractive.local,dell1.hessinteractive.local"
+            hbaseZookeeperPort = 2181
+        }
+
+        addEnvironment("kosei") {
+            println "Configuring environment kosei prod"
+            defaultFS = "hdfs://namenode.internal.kosei.me:8020"
+            jobTracker = "namenode.internal.kosei.me:8032"
+            hadoopUser = "kosei"
+            oozieURL = "http://namenode.internal.kosei.me:11000/oozie"
+            proxyServer = "localhost:1081"
+            hbaseZookeeperQuorum =
+                    "hbasemaster.internal.kosei.me,hbase1.internal.kosei.me,hbase3.internal.kosei.me,hbase2.internal.kosei.me"
+            hbaseZookeeperPort = 2181
+//        hadoopConfigurationProperties = ["name":"value",
+//                                         "name2":"value2"]
+        }
+    }
+
+    task selectEnvironmentHess(type: com.kosei.dataops.environment.SelectHadoopEnvironmentTask,
+                               dependsOn: defineHadoopEnvironments) {
+         environmentName("hess")
+
+    }
+
+    checkHadoopEnvironmentSet << {
+        replaceTokens.addAll([
+                defaultFS      : tasks.defineHadoopEnvironments.selectedEnvironment.defaultFS,
+                hadoopUser     : tasks.defineHadoopEnvironments.selectedEnvironment.hadoopUser,
+                jobTracker     : tasks.defineHadoopEnvironments.selectedEnvironment.jobTracker,
+                jobVersion     : project.version,
+                workflowName   : project.name + "-wf",
+                coordinatorName: project.name + "-coord",
+                jobRoot        : tasks.defineHadoopEnvironments.selectedEnvironment.defaultFS
+                        + destDir,
+                environmentRoot: tasks.defineHadoopEnvironments.selectedEnvironment.defaultFS
+                        + "/shared/"+ tasks.defineHadoopEnvironments.selectedEnvironment.name,
+                workflowXml    : workflowXmlPath,
+                coordinatorXml : coordinatorXmlPath
+        ]);
+    }
+
+    task packageJob(type: Sync,
+                    dependsOn: [checkHadoopEnvironmentSet, build]) {
+        with distSpec
+        into "${project.buildDir}/job"
+    }
+
+    task deployJobFiles(type: com.kosei.dataops.hdfs.HdfsCopyTask,
+                dependsOn: [packageJob]) {
+        println "INTO: /user/jonathan/oozie/${project.name}"
+        into(destDir)
+        from ("${project.buildDir}/job") {
+            exclude("lib/hadoop-*.jar")
+            exclude("lib/servlet-*.jar")
+            exclude("lib/avro-*.jar")
+            exclude("lib/logback-*.jar")
+            exclude("lib/zookeeper-*.jar")
+        }
+        deleteDestinationBeforeCopy(false)
+    }
+
+    task pushOozieJob(dependsOn:[checkHadoopEnvironmentSet]) << {
+        def postJobUrl = new URL(tasks.defineHadoopEnvironments.selectedEnvironment.oozieURL+"/v1/jobs")
+        HttpURLConnection conn = postJobUrl.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+        conn.setRequestProperty("Content-Type", "application/xml");
+        OutputStream out = conn.getOutputStream();
+        File file = project.file("build/job/coord-config.xml")
+        FileInputStream inStream = new FileInputStream(file);
+        IOUtils.copy(inStream , out);
+        inStream.close();
+        out.close();
+
+        InputStream inFromOozie;
+        if(conn.getResponseCode() > 299) {
+            println "OOZIE response code "+conn.getResponseCode()
+            println "OOZIE error: "
+            println conn.getHeaderField("oozie-error-code")
+            println conn.getHeaderField("oozie-error-message");
+            inFromOozie = conn.getErrorStream();
+            IOUtils.copy(inFromOozie, System.out);
+            fail("Oozie upload failed");
+        } else {
+            inFromOozie = conn.getInputStream();
+            IOUtils.copy(inFromOozie, System.out);
+        }
+        inFromOozie.close();
+        conn.disconnect();
     }
 }
