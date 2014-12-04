@@ -143,6 +143,7 @@ project("ooziejobs:fetch-catalog-updates") {
             hbaseZookeeperQuorum =
                     "dell3.hessinteractive.local,dell2.hessinteractive.local,dell1.hessinteractive.local"
             hbaseZookeeperPort = 2181
+            hbaseZookeperNode = "/hbase"
         }
 
         addEnvironment("kosei") {
@@ -155,6 +156,7 @@ project("ooziejobs:fetch-catalog-updates") {
             hbaseZookeeperQuorum =
                     "hbasemaster.internal.kosei.me,hbase1.internal.kosei.me,hbase3.internal.kosei.me,hbase2.internal.kosei.me"
             hbaseZookeeperPort = 2181
+            hbaseZookeperNode = "/hbase"
 //        hadoopConfigurationProperties = ["name":"value",
 //                                         "name2":"value2"]
         }
