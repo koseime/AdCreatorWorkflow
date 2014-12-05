@@ -1,2 +1,2 @@
 rootProject.name = 'ad-creator-workflow'
-include 'ooziejobs:fetch-catalog-updates', 'ooziejobs:samplejob'
+include 'common', 'jobs:fetch-catalog-updates', 'jobs:samplejob'
