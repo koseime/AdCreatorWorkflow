@@ -82,6 +82,9 @@ project("common") {
 
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}
 
 /*
 shadowJar { 
@@ -114,6 +117,7 @@ project("jobs:samplejob") {
 project("jobs:fetch-catalog-updates") {
     apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-base.gradle"
     apply plugin: 'java'
+
     dependencies {
         compile project(':common')
     }
@@ -121,13 +125,11 @@ project("jobs:fetch-catalog-updates") {
     apply plugin:'com.kosei.dataops.oozie'
 
     oozie {
-
         // Adds additional jar files to be excluded from the
         // oozie artifact
         archiveExcludes.addAll([
-                'lib/servlet*.jar',
-                'lib/jsp*.jar'
+            'lib/servlet*.jar',
+            'lib/jsp*.jar'
         ])
-
     }
 }
