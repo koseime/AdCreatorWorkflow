@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'ws.antonov.gradle.plugins:gradle-plugin-protobuf:0.9.1'
-        classpath group: 'com.kosei.dataops', name: 'gradle-dataops-plugin', version: '0.3-SNAPSHOT'
+        classpath group: 'com.kosei.dataops', name: 'gradle-dataops-plugin', version: '0.4-SNAPSHOT'
     }
 }
 

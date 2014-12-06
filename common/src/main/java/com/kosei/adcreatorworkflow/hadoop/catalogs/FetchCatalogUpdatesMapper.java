@@ -34,31 +34,47 @@ public class FetchCatalogUpdatesMapper extends
   private static final int PAGE_SIZE = 100;
   private static final int MAX_RECORDS = Integer.MAX_VALUE;
   private ObjectMapper om;
+  private CatalogVersionResource catalogVersionResource;
+  FetchCatalogUpdatesMapper() {
+    System.err.println("FetchCatalogUpdatesMapper Constructor");
+  }
 
   @Override
   protected void setup(Context context) throws IOException, InterruptedException {
-    this.om = Jackson.newObjectMapper();
-    super.setup(context);
+    System.err.println("FetchCatalogUpdatesMapper setup() start");
+    try {
+      log.info("Configuring mapper context");
+      this.om = Jackson.newObjectMapper();
+      super.setup(context);
+      String apiToken = context.getConfiguration().get("managementClientApiToken");
+      String baseURL = context.getConfiguration().get("managementClientApiEndPoint");
+
+      ManagementJsonClient managementJsonClient = new ManagementJsonClient(
+          apiToken, baseURL, Jackson.newObjectMapper(), new UrlConnectionClient());
+
+      catalogVersionResource = managementJsonClient.getCatalogVersionResource();
+      // run a test query to attempt to get a single catalog item
+      catalogVersionResource.viewAll(0, 1);
+      log.info("FetchCatalogUpdater.setup() completed successfully");
+    } catch(Exception e) {
+      System.err.println("FetchCatalogUpdatesMapper setup() exception");
+      log.error("Unable to query the catalog resource", e);
+    }
+    System.err.println("FetchCatalogUpdatesMapper setup() exit");
   }
 
   @Override
   protected void map(NullWritable key, NullWritable value, Context context) throws IOException, InterruptedException {
+    System.err.println("FetchCatalogUpdatesMapper map() enter");
     int localCounter = 0;
 
-    String apiToken = context.getConfiguration().get("managementClientApiToken");
-    String baseURL = context.getConfiguration().get("managementClientApiEndPoint");
-
-    ManagementJsonClient managementJsonClient = new ManagementJsonClient(
-        apiToken, baseURL, Jackson.newObjectMapper(), new UrlConnectionClient());
-
-    CatalogVersionResource
-        catalogVersionResource = managementJsonClient.getCatalogVersionResource();
 
     Page<JsonCatalogVersion> catalogVersionsPage;
     long index = 0;
     do {
 
       catalogVersionsPage = catalogVersionResource.viewAll(index, PAGE_SIZE);
+      System.err.println("FetchCatalogUpdatesMapper map() versionsPage: "+catalogVersionsPage);
       for(JsonCatalogVersion cv : catalogVersionsPage.content) {
         try {
           localCounter++;
@@ -74,6 +90,7 @@ public class FetchCatalogUpdatesMapper extends
       index += PAGE_SIZE;
     } while(catalogVersionsPage != null && catalogVersionsPage.getNextLink() != null && localCounter < MAX_RECORDS) ;
 
+    System.err.println("FetchCatalogUpdatesMapper map() exit");
 
   }
 }
