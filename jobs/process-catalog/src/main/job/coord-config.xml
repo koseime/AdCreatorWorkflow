@@ -1,0 +1,286 @@
+<configuration>
+
+    <!-- BEGIN Standard oozie configuration properties -->
+    <property>
+        <name>user.name</name>
+        <value>@hadoopUser@</value>
+    </property>
+    <property>
+        <name>oozie.coord.application.path</name>
+        <value>@workflowRootUri@</value>
+    </property>
+    <property>
+        <name>oozie.use.system.libpath</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>oozie.wf.rerun.failnodes</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>queueName</name>
+        <value>default</value>
+    </property>
+    <!-- END Standard oozie configuration properties -->
+
+    <!-- BEGIN CUSTOM job properties -->
+    <property>
+        <name>projectTempDataPath</name>
+        <value>${environmentRootPath}/temp/${projectName}</value>
+    </property>
+
+    <property>
+        <name>advertisersRoot</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>awsAccessKey</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>awsSecretKey</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>endCoordDate</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>environmentRootPath</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>jobTracker</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>managementClientApiEndPoint</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>managementClientApiToken</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>nameNode</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>projectName</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>queueName</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>startCoordDate</name>
+        <value>XXXXXXX</value>
+    </property>
+    <property>
+        <name>workflowRoot</name>
+        <value>XXXXXXX</value>
+    </property>
+
+    <!-- END CUSTOM job properties -->
+
+    <!-- BEGIN Standard Kosei OOZIE job properties -->
+
+
+
+
+
+    <!-- Oozie Gradle Plugin properties-->
+    <!--
+        The name of this environment. This is the a Kosei development
+        construct that allows us to run multiple environments on the
+        same hadoop cluster
+        eg:
+            kosei
+            dev
+    -->
+    <property>
+        <name>environmentName</name>
+        <value>@environmentName@</value>
+    </property>
+
+    <!--
+        the name of the project from which this workflow is built. This
+        is determined by the Gradle build file.
+        eg:
+            update-catalog
+    -->
+    <property>
+        <name>projectName</name>
+        <value>@projectName@</value>
+    </property>
+
+
+    <!--
+        The path to the root of this environment's HDFS cluster,
+        without a trailing slash.  Aliased to "nameNode" to make it
+        more friendly to oozie conventions
+        eg:
+        hdfs://namenode.internal.kosei.me:8020
+    -->
+    <property>
+        <name>defaultFS</name>
+        <value>@defaultFS@</value>
+    </property>
+    <property>
+        <name>nameNode</name>
+        <value>@defaultFS@</value>
+    </property>
+
+    <!--
+        The hadoop user name for this environment
+        eg:
+            kosei_dev
+    -->
+    <property>
+        <name>hadoopUser</name>
+        <value>@hadoopUser@</value>
+    </property>
+
+    <!--
+        The job tracker <hostname>:<port>
+        eg:
+        namenode.internal.kosei.me:8032
+    -->
+    <property>
+        <name>jobTracker</name>
+        <value>@jobTracker@</value>
+    </property>
+
+    <!--
+        the project build version from which this file was build
+        taken from the Gradle file on build
+        eg:
+            0.123
+    -->
+    <property>
+        <name>jobVersion</name>
+        <value>@jobVersion@</value>
+    </property>
+
+    <!--
+        the name of the oozie workflow in the format
+            <environment>-<project>-wf
+        eg:
+            kosei-update-catalog-wf
+    -->
+    <property>
+        <name>workflowName</name>
+        <value>@workflowName@</value>
+    </property>
+
+    <!--
+        the name of the oozie coordinator in the format
+            <environment>-<project>-coord
+        eg:
+            kosei-update-catalog-coord
+    -->
+    <property>
+        <name>coordinatorName</name>
+        <value>@coordinatorName@</value>
+    </property>
+
+    <!--
+        The fully-qualified HDFS URI where this job resides on the
+        HDFS file system. workflowRootUri property is aliased to
+        "workflowRoot" for oozie conventions
+
+        eg:
+         ...Uri:  hdfs://namenode.internal.kosei.me:8020/shared/kosei/oozie/update-catalog
+         ...Path: /shared/kosei/oozie/update-catalog
+    -->
+    <property>
+        <name>workflowRootUri</name>
+        <value>@workflowRootUri@</value>
+    </property>
+    <property>
+        <name>workflowRoot</name>
+        <value>@workflowRootUri@</value>
+    </property>
+    <property>
+        <name>workflowRootPath</name>
+        <value>@workflowRootPath@</value>
+    </property>
+
+    <!--
+        The fully-qualified HDFS URI where this to the root of this environment's
+        files on HDFS
+        eg:
+         ...Uri:  hdfs://namenode.internal.kosei.me:8020/shared/kosei
+         ...Path: /shared/kosei
+    -->
+    <property>
+        <name>environmentRootUri</name>
+        <value>@environmentRootUri@</value>
+    </property>
+    <property>
+        <name>environmentRootPath</name>
+        <value>@environmentRootPath@</value>
+    </property>
+
+    <!--
+        The fully-qualified HDFS URI to this job's workflow.xml file
+        eg:
+            ...Uri:  hdfs://namenode.internal.kosei.me:8020/shared/kosei/oozie/update-catalog/workflow.xml
+            ...Path: /shared/kosei/oozie/update-catalog/workflow.xml
+    -->
+    <property>
+        <name>workflowXmlUri</name>
+        <value>@workflowXmlUri@</value>
+    </property>
+    <property>
+        <name>workflowXmlPath</name>
+        <value>@workflowXmlPath@</value>
+    </property>
+
+    <!--
+        The fully-qualified HDFS URI to this job's workflow.xml file
+        eg:
+            ...Uri:  hdfs://namenode.internal.kosei.me:8020/shared/kosei/oozie/update-catalog/workflow.xml
+            ...Path: /shared/kosei/oozie/update-catalog/workflow.xml
+    -->
+    <property>
+        <name>coordinatorXmlUri</name>
+        <value>@coordinatorXmlUri@</value>
+    </property>
+    <property>
+        <name>coordinatorXmlPath</name>
+        <value>@coordinatorXmlPath@</value>
+    </property>
+
+    <!--
+        The zookeeper quorum string for HBase
+        eg:
+            hbasemaster.internal.kosei.me,hbase1.internal.kosei.me,hbase3.internal.kosei.me,hbase2.internal.kosei.me
+    -->
+    <property>
+        <name>hbaseZookeeperQuorum</name>
+        <value>@hbaseZookeeperQuorum@</value>
+    </property>
+
+    <!--
+        The port for hbase zookeeper
+        eg:
+            2181
+    -->
+    <property>
+        <name>hbaseZookeeperPort</name>
+        <value>@hbaseZookeeperPort@</value>
+    </property>
+
+    <!--
+        The root zookeper node for hbase
+        eg:
+            /hbase
+    -->
+    <property>
+        <name>hbaseZookeeperNode</name>
+        <value>@hbaseZookeeperNode@</value>
+    </property>
+
+</configuration>
