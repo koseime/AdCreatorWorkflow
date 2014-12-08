@@ -45,7 +45,7 @@
                 </property>
                 <property>
                     <name>mapreduce.job.reduces</name>
-                    <value>1</value>
+                    <value>20</value>
                 </property>
 
                 <property>
@@ -202,7 +202,6 @@
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
-                <delete path="${environmentRoot}/temp/fetch-catalog-updates/catalog-to-hbase"/>
             </prepare>
 
             <configuration>
@@ -257,7 +256,7 @@
                 </property>
                 <property>
                     <name>mapreduce.job.reduces</name>
-                    <value>5</value>
+                    <value>0</value>
                 </property>
 
                 <property>
