@@ -238,18 +238,8 @@
                     <name>mapreduce.job.map.class</name>
                     <value>com.kosei.adcreatorworkflow.hadoop.catalogs.CatalogToHbaseMapper</value>
                 </property>
-                <property>
-                    <name>mapreduce.job.reduce.class</name>
-                    <value>org.apache.hadoop.hbase.mapreduce.TableOutputFormat</value>
-                </property>
-                <property>
-                    <name>hbase.mapred.outputtable</name>
-                    <value>${catalogHbaseTableName}</value>
-                </property>
-                <property>
-                    <name>hbase.mapred.output.quorum</name>
-                    <value>${hbaseMapredOutputQuorum}</value>
-                </property>
+
+
                 <property>
                     <name>mapreduce.job.maps</name>
                     <value>20</value>
@@ -264,6 +254,15 @@
                     <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
                 </property>
                 <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${projectTempDataPath}/parse-catalogs</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.job.outputformat.class</name>
+                    <value>org.apache.hadoop.hbase.mapreduce.TableOutputFormat</value>
+                </property>
+                <property>
                     <name>mapreduce.map.output.key.class</name>
                     <value>org.apache.hadoop.io.BytesWritable</value>
                 </property>
@@ -271,36 +270,16 @@
                     <name>mapreduce.map.output.value.class</name>
                     <value>org.apache.hadoop.io.Writable</value>
                 </property>
-                <!--
                 <property>
-                    <name>mapreduce.job.outputformat.class</name>
-                    <value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</value>
+                    <name>hbase.mapred.outputtable</name>
+                    <value>${catalogHbaseTableName}</value>
                 </property>
                 <property>
-                    <name>mapreduce.job.output.key.class</name>
-                    <value>org.apache.hadoop.io.NullWritable</value>
+                    <name>hbase.mapred.output.quorum</name>
+                    <value>${hbaseMapredOutputQuorum}</value>
                 </property>
-                <property>
-                    <name>mapreduce.job.output.value.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable</value>
-                </property>
-                -->
-                <property>
-                    <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${projectTempDataPath}/parse-catalogs</value>
-                </property>
-                <!--
-                <property>
-                    <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/parsed-catalog</value>
-                </property>
-                -->
-                <!--
-                <property>
-                    <name>job.timestamp</name>
-                    <value>${wf:actionData('catalog-pull')['TIMESTAMP']}</value>
-                </property>
-                -->
+
+
             </configuration>
         </map-reduce>
         <ok to="end"/>
