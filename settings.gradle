@@ -1,2 +1,8 @@
 rootProject.name = 'ad-creator-workflow'
-include 'common', 'jobs:fetch-catalog-updates', 'jobs:samplejob'
+include 'common',
+        'jobs:fetch-catalog-updates',
+        'jobs:samplejob',
+        'jobs:compact-catalog',
+        'jobs:create-campaign',
+        'jobs:process-catalog'
+

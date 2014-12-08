@@ -23,7 +23,7 @@ dataops {
         defaultFS = "hdfs://hivecluster2-srv6.labs.lan:8020"
         hadoopUser = "kosei"
         jobTracker = "hivecluster2-srv6.labs.lan:8032"
-        oozieURL = "http://hivecluster2-srv6.labs.lan:11000/oozie"
+        oozieURL = "http://hivecluster2-srv7.labs.lan:11000/oozie"
         hbaseZookeeperQuorum =
                 "hivecluster2-srv2.labs.lan,hivecluster2-srv6.labs.lan,hivecluster2-srv4.labs.lan"
         hbaseZookeeperPort = 2181
@@ -34,6 +34,7 @@ dataops {
         hadoopUser = "kosei"
         jobTracker = "hivecluster6.labs.lan:8032"
         oozieURL = "http://hivecluster6.labs.lan:11000/oozie"
+        basePath = "/shared/kosei"
         hbaseZookeeperQuorum = "hivecluster6.labs.lan"
         hbaseZookeeperPort = 2181
         hbaseZookeeperNode = "/hbase"
@@ -146,8 +147,19 @@ project("jobs:samplejob") {
     apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-base.gradle"
     apply plugin: 'java'
     apply plugin:'com.kosei.dataops.oozie'
+
+    // this is where you can customize the behavior of Oozie
+    oozie {
+        // Adds additional jar files to be excluded from the
+        // oozie artifact
+        archiveExcludes.addAll([
+                'lib/servlet*.jar',
+                'lib/jsp*.jar'
+        ])
+    }
 }
 
+// Standard oozie job extension
 project("jobs:fetch-catalog-updates") {
     apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-base.gradle"
     apply plugin: 'java'
@@ -157,13 +169,40 @@ project("jobs:fetch-catalog-updates") {
     }
 
     apply plugin:'com.kosei.dataops.oozie'
+}
 
-    oozie {
-        // Adds additional jar files to be excluded from the
-        // oozie artifact
-        archiveExcludes.addAll([
-            'lib/servlet*.jar',
-            'lib/jsp*.jar'
-        ])
+// Standard oozie job extension
+project("jobs:compact-catalog") {
+    apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-base.gradle"
+    apply plugin: 'java'
+
+    dependencies {
+        compile project(':common')
     }
+
+    apply plugin:'com.kosei.dataops.oozie'
+}
+
+// Standard oozie job extension
+project("jobs:create-campaign") {
+    apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-base.gradle"
+    apply plugin: 'java'
+
+    dependencies {
+        compile project(':common')
+    }
+
+    apply plugin:'com.kosei.dataops.oozie'
+}
+
+// Standard oozie job extension
+project("jobs:process-catalog") {
+    apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-base.gradle"
+    apply plugin: 'java'
+
+    dependencies {
+        compile project(':common')
+    }
+
+    apply plugin:'com.kosei.dataops.oozie'
 }
