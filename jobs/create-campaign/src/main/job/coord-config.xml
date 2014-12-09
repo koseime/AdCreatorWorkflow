@@ -31,111 +31,67 @@
 
     <property>
         <name>advertisersRoot</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>awsAccessKey</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>awsSecretKey</name>
-        <value>XXXXXXX</value>
+        <value>${environmentRootUri}/advertisers</value>
     </property>
     <property>
         <name>bucketName</name>
-        <value>XXXXXXX</value>
+        <value>catalog-upload</value>
     </property>
     <property>
         <name>campaignImageDir</name>
-        <value>XXXXXXX</value>
+        <value>${campaignRoot}/${campaignName}.raw</value>
     </property>
     <property>
         <name>campaignMetaDir</name>
-        <value>XXXXXXX</value>
+        <value>${campaignRoot}/${campaignName}.meta</value>
     </property>
     <property>
         <name>campaignName</name>
-        <value>XXXXXXX</value>
+        <value>${advertiserId}-${timestamp}-${campaignId}-${campaignVersionId}</value>
     </property>
     <property>
         <name>campaignRoot</name>
-        <value>XXXXXXX</value>
+        <value>${advertiserRoot}/campaign/${year}/${month}/${day}</value>
     </property>
     <property>
         <name>campaignTarDir</name>
-        <value>XXXXXXX</value>
+        <value>${campaignRoot}/${campaignName}.tar.gz</value>
     </property>
     <property>
         <name>campaignVersionId</name>
-        <value>XXXXXXX</value>
+        <value>3</value>
     </property>
     <property>
         <name>compactedCatalogDir</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>endCoordDate</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>environmentRootPath</name>
-        <value>XXXXXXX</value>
+        <value>${campaignRoot}/${campaignName}.catalog</value>
     </property>
     <property>
         <name>fontsDir</name>
-        <value>XXXXXXX</value>
+        <value>${environmentRootUri}/fonts</value>
     </property>
     <property>
         <name>imageCatalogDir</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>jobTracker</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>jobType</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>managementClientApiEndPoint</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>managementClientApiToken</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>nameNode</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>projectName</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>queueName</name>
-        <value>XXXXXXX</value>
+        <value>3/catalog/archive/111/</value>
     </property>
     <property>
         <name>resourceBucketName</name>
-        <value>XXXXXXX</value>
+        <value>kosei-prod/ad-creative-bundle</value>
     </property>
     <property>
         <name>resourcesDir</name>
-        <value>XXXXXXX</value>
+        <value>${advertiserRoot}/campaign/resources/${campaignName}</value>
+    </property>
+    <property>
+        <name>endCoordDate</name>
+        <value>2014-09-09T17:32Z</value>
     </property>
     <property>
         <name>startCoordDate</name>
-        <value>XXXXXXX</value>
+        <value>2014-09-08T17:37Z</value>
     </property>
     <property>
         <name>triggerDir</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>workflowRoot</name>
-        <value>XXXXXXX</value>
+        <value>3/catalog/archive/111</value>
     </property>
 
     <!-- END CUSTOM job properties -->
@@ -320,7 +276,7 @@
     </property>
 
     <!--
-        The port for hbase zookeeper
+        The port for hbase zookeeperd
         eg:
             2181
     -->
@@ -337,6 +293,24 @@
     <property>
         <name>hbaseZookeeperNode</name>
         <value>@hbaseZookeeperNode@</value>
+    </property>
+
+    <property>
+        <name>managementClientApiEndPoint</name>
+        <value>@managementClientApiEndPoint@</value>
+    </property>
+    <property>
+        <name>managementClientApiToken</name>
+        <value>@managementClientApiToken@</value>
+    </property>
+
+    <property>
+        <name>awsAccessKey</name>
+        <value>@awsAccessKey@</value>
+    </property>
+    <property>
+        <name>awsSecretKey</name>
+        <value>@awsSecretKey@</value>
     </property>
 
 </configuration>

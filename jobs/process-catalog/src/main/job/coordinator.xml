@@ -1,4 +1,4 @@
-<coordinator-app name="process-catalog-coord" frequency="30" start="${startCoordDate}" end="${endCoordDate}" timezone="GMT" xmlns="uri:oozie:coordinator:0.1">
+<coordinator-app name="@coordinatorName@" frequency="30" start="${startCoordDate}" end="${endCoordDate}" timezone="GMT" xmlns="uri:oozie:coordinator:0.1">
     <action>
         <workflow>
             <app-path>${workflowRoot}/workflow.xml</app-path>

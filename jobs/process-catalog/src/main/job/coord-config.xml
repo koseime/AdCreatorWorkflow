@@ -31,56 +31,20 @@
 
     <property>
         <name>advertisersRoot</name>
-        <value>XXXXXXX</value>
+        <value>${environmentRootUri}/advertisers</value>
     </property>
-    <property>
-        <name>awsAccessKey</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>awsSecretKey</name>
-        <value>XXXXXXX</value>
-    </property>
+
     <property>
         <name>endCoordDate</name>
-        <value>XXXXXXX</value>
+        <value>2019-12-09T19:25Z</value>
     </property>
-    <property>
-        <name>environmentRootPath</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>jobTracker</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>managementClientApiEndPoint</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>managementClientApiToken</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>nameNode</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>projectName</name>
-        <value>XXXXXXX</value>
-    </property>
-    <property>
-        <name>queueName</name>
-        <value>XXXXXXX</value>
-    </property>
+
     <property>
         <name>startCoordDate</name>
-        <value>XXXXXXX</value>
+        <value>2014-12-09T19:25Z</value>
     </property>
-    <property>
-        <name>workflowRoot</name>
-        <value>XXXXXXX</value>
-    </property>
+
+
 
     <!-- END CUSTOM job properties -->
 
@@ -281,6 +245,24 @@
     <property>
         <name>hbaseZookeeperNode</name>
         <value>@hbaseZookeeperNode@</value>
+    </property>
+
+    <property>
+        <name>managementClientApiEndPoint</name>
+        <value>@managementClientApiEndPoint@</value>
+    </property>
+    <property>
+        <name>managementClientApiToken</name>
+        <value>@managementClientApiToken@</value>
+    </property>
+
+    <property>
+        <name>awsAccessKey</name>
+        <value>@awsAccessKey@</value>
+    </property>
+    <property>
+        <name>awsSecretKey</name>
+        <value>@awsSecretKey@</value>
     </property>
 
 </configuration>

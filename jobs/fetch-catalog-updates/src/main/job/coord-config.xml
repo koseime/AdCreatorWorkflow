@@ -39,19 +39,19 @@
     </property>
     <property>
         <name>managementClientApiToken</name>
-        <value>igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3</value>
+        <value>@managementClientApiToken@</value>
     </property>
     <property>
         <name>managementClientApiEndPoint</name>
-        <value>https://sentry.kosei.com</value>
+        <value>@managementClientApiEndPoint@</value>
     </property>
     <property>
         <name>awsAccessKey</name>
-        <value>AKIAIVEJZIYPGUU4T3WQ</value>
+        <value>@awsAccessKey@</value>
     </property>
     <property>
         <name>awsSecretKey</name>
-        <value>g+u3CR83yXLQ/zOGs7vo2v33yR+8t+53CqCfsTkG</value>
+        <value>@awsSecretKey@</value>
     </property>
 
     <!-- END CUSTOM job properties -->

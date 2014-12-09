@@ -28,18 +28,26 @@ dataops {
                 "hivecluster2-srv2.labs.lan,hivecluster2-srv6.labs.lan,hivecluster2-srv4.labs.lan"
         hbaseZookeeperPort = 2181
         hbaseZookeeperNode = "/hbase"
+        managementClientApiEndPoint="http://dev1.kosei.me:8380"
+        managementClientApiToken="igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3"
+        awsAccessKey="AKIAIVEJZIYPGUU4T3WQ"
+        awsSecretKey="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"
+
     }
     environment("release") {
         defaultFS = "hdfs://hivecluster6.labs.lan:8020"
         hadoopUser = "kosei"
         jobTracker = "hivecluster6.labs.lan:8032"
         oozieURL = "http://hivecluster6.labs.lan:11000/oozie"
-        basePath = "/shared/kosei"
         hbaseZookeeperQuorum = "hivecluster6.labs.lan"
         hbaseZookeeperPort = 2181
         hbaseZookeeperNode = "/hbase"
-
+        managementClientApiEndPoint="https://sentry.kosei.com"
+        managementClientApiToken="igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3"
+        awsAccessKey="AKIAIVEJZIYPGUU4T3WQ"
+        awsSecretKey="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"
     }
+
     environment("hess") {
         defaultFS = "hdfs://dell3.hessinteractive.local:8020"
         hadoopUser = "jonathan"
@@ -49,6 +57,10 @@ dataops {
                 "dell3.hessinteractive.local,dell2.hessinteractive.local,dell1.hessinteractive.local"
         hbaseZookeeperPort = 2181
         hbaseZookeeperNode = "/hbase"
+        managementClientApiEndPoint="https://sentry.kosei.com"
+        managementClientApiToken="igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3"
+        awsAccessKey="AKIAIVEJZIYPGUU4T3WQ"
+        awsSecretKey="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"
     }
     environment("preprod") {
         println "Configuring environment kosei production environment"
@@ -61,6 +73,10 @@ dataops {
                 "hbasemaster.internal.kosei.me,hbase1.internal.kosei.me,hbase3.internal.kosei.me,hbase2.internal.kosei.me"
         hbaseZookeeperPort = 2181
         hbaseZookeeperNode = "/hbase"
+        managementClientApiEndPoint="https://sentry.kosei.com"
+        managementClientApiToken="igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3"
+        awsAccessKey="AKIAIVEJZIYPGUU4T3WQ"
+        awsSecretKey="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"
 //        hadoopConfigurationProperties = ["name":"value",
 //                                         "name2":"value2"]
     }
@@ -75,6 +91,10 @@ dataops {
                 "hbasemaster.internal.kosei.me,hbase1.internal.kosei.me,hbase3.internal.kosei.me,hbase2.internal.kosei.me"
         hbaseZookeeperPort = 2181
         hbaseZookeeperNode = "/hbase"
+        managementClientApiEndPoint="https://sentry.kosei.com"
+        managementClientApiToken="igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3"
+        awsAccessKey="AKIAIVEJZIYPGUU4T3WQ"
+        awsSecretKey="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"
 //        hadoopConfigurationProperties = ["name":"value",
 //                                         "name2":"value2"]
     }
