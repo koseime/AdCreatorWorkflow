@@ -55,7 +55,7 @@ public class KoseiProductItem {
     }
 
     public String[] getAllImageURIs() {
-        ArrayList<String> s = new ArrayList<>();
+        ArrayList<String> s = new ArrayList<String>();
         if (!imageLink.isEmpty()) {
             s.add(imageLink);
         }

@@ -78,7 +78,7 @@ public class ByteWritableImageCrawlerMapper extends
     }
 
     private String getFileName(AdCreatorAssetsWritable entry) {
-        String jobTimestamp = new String(entry.getMeta(new Text("job_timestamp")).copyBytes());
+        String jobTimestamp = new String(entry.getMeta(new Text("timestamp")).copyBytes());
         String advertiserId = new String(entry.getMeta(new Text("advertiser_id")).copyBytes());
         String catalogId = new String(entry.getMeta(new Text("catalog_id")).copyBytes());
         return advertiserId + "-" + jobTimestamp + "-" + catalogId + ".images";

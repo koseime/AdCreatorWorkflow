@@ -1,21 +1,14 @@
 package com.kosei.adcreatorworkflow.hadoop.catalogs;
 
-import com.kosei.adcreatorworkflow.hadoop.CatalogCompactorMapper;
-import com.kosei.adcreatorworkflow.hadoop.CatalogCompactorReducer;
 import com.kosei.adcreatorworkflow.hadoop.catalogs.data.NullInputFormat;
+import com.kosei.adcreatorworkflow.hadoop.rest.RestResourceReducer;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 
@@ -41,8 +34,8 @@ public class FetchCatalogUpdates {
     job.getConfiguration().set("awsAccessKey","AKIAIVEJZIYPGUU4T3WQ");
     job.getConfiguration().set("awsSecretKey","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");
     job.setJarByClass(FetchCatalogUpdates.class);
-    job.setMapperClass(FetchCatalogUpdatesMapper.class);
-    job.setReducerClass(FetchCatalogUpdatesReducer.class);
+    job.setMapperClass(AllCatalogVersionsMapper.class);
+    job.setReducerClass(RestResourceReducer.class);
     job.setInputFormatClass(NullInputFormat.class);
     job.setMapOutputKeyClass(LongWritable.class);
     job.setMapOutputValueClass(BytesWritable.class);

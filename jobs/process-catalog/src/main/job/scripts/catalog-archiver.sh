@@ -1,11 +1,15 @@
+#!/bin/bash
 # argument 1: processed catalogs root
 # argument 2: advertisers root
+
+set -x
 
 ls_command="hadoop fs -ls $1"
 file_list=$(echo `eval $ls_command` | grep -o "$1[^[:space:]]*images-m-00000[^[:space:]]*")
 
 for file in $file_list
 do
+
     filename=${file#$1"/"}
     IFS="-." parts=($filename)
     advertiser_id=${parts[0]}
@@ -16,5 +20,6 @@ do
     eval "hadoop fs -mkdir -p $dest"
     eval "hadoop fs -mv $files $dest"
     eval "hadoop fs -mkdir $dest/$trigger_file"
+
 done
 

@@ -37,11 +37,11 @@
                 </property>
                 <property>
                     <name>mapreduce.job.map.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.catalogs.FetchCatalogUpdatesMapper</value>
+                    <value>com.kosei.adcreatorworkflow.hadoop.catalogs.AllCatalogVersionsMapper</value>
                 </property>
                 <property>
                     <name>mapreduce.job.reduce.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.catalogs.FetchCatalogUpdatesReducer</value>
+                    <value>com.kosei.adcreatorworkflow.hadoop.rest.RestResourceReducer</value>
                 </property>
                 <property>
                     <name>mapreduce.job.reduces</name>

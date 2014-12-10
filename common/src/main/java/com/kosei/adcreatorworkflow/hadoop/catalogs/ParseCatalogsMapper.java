@@ -35,7 +35,7 @@ import java.net.URISyntaxException;
  * Created by hess on 11/17/14.
  */
 public class ParseCatalogsMapper extends Mapper<LongWritable, BytesWritable, Text, ProductItemWritable> {
-  private static final Logger log = LoggerFactory.getLogger(FetchCatalogUpdatesReducer.class);
+  private static final Logger log = LoggerFactory.getLogger(ParseCatalogsMapper.class);
   private ObjectMapper om;
   private AmazonS3Client s3Client;
   private ObjectReader reader;

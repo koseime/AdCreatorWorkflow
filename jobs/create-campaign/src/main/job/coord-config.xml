@@ -67,7 +67,7 @@
     </property>
     <property>
         <name>fontsDir</name>
-        <value>${environmentRootUri}/fonts</value>
+        <value>${workflowRootUri}/fonts</value>
     </property>
     <property>
         <name>imageCatalogDir</name>

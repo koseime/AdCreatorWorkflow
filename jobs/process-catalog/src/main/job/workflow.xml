@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow-app xmlns="uri:oozie:workflow:0.2" name="${workflowName}">
-    <start to="catalog-pull"/>
+    <start to="job-timestamp-properties"/>
 
-    <action name="catalog-pull">
+    <action name="job-timestamp-properties"> <!-- no longer job-timestamp-properties, just producing timestamp info-->
         <java>
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
@@ -12,57 +12,19 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-            <main-class>com.kosei.adcreatorworkflow.hadoop.CatalogPuller</main-class>
-            <arg>${managementClientApiToken}</arg>
-            <arg>${managementClientApiEndPoint}</arg>
-            <arg>${advertisersRoot}/catalogs</arg>
+            <main-class>com.kosei.adcreatorworkflow.hadoop.WorkflowTimestampProperties</main-class>
             <capture-output/>
         </java>
-        <ok to="check-new-catalogs"/>
+        <ok to="fetch-catalog-versions"/>
         <error to="fail"/>
     </action>
 
-    <decision name="check-new-catalogs">
-        <switch>
-            <case to="catalog-download">
-                ${fs:exists(concat(concat(concat(advertisersRoot,'/catalogs/'),wf:actionData('catalog-pull')['TIMESTAMP']),'/catalog_locations.txt'))=="true"}
-            </case>
-            <default to="end"/>
-        </switch>
-    </decision>
-
-    <action name="catalog-download">
-        <shell xmlns="uri:oozie:shell-action:0.1">
-            <job-tracker>${jobTracker}</job-tracker>
-            <name-node>${nameNode}</name-node>
-            <prepare>
-                <delete path="${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/raw-catalog"/>
-                <mkdir path="${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/raw-catalog"/>
-            </prepare>
-            <configuration>
-                <property>
-                    <name>mapred.job.queue.name</name>
-                    <value>${queueName}</value>
-                </property>
-            </configuration>
-            <exec>catalog-downloader.sh</exec>
-            <argument>${awsAccessKey}</argument>
-            <argument>${awsSecretKey}</argument>
-            <argument>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/raw-catalog</argument>
-            <argument>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/catalog_locations.txt</argument>
-            <argument>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/catalog_names.txt</argument>
-            <file>scripts/catalog-downloader.sh</file>
-        </shell>
-        <ok to="parse-catalog"/>
-        <error to="fail"/>
-    </action>
-
-    <action name='parse-catalog'>
+    <action name='fetch-catalog-versions'>
         <map-reduce>
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
-                <delete path="${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/parsed-catalog"/>
+                <delete path="${projectTempDataPath}/fetch-catalog-versions"/>
             </prepare>
 
             <configuration>
@@ -80,11 +42,121 @@
                 </property>
                 <property>
                     <name>mapreduce.job.map.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.KoseiTextParserMapper</value>
+                    <value>com.kosei.adcreatorworkflow.hadoop.catalogs.UnprocessedCatalogVersionsMapper</value>
                 </property>
                 <property>
                     <name>mapreduce.job.reduce.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.KoseiTextParserReducer</value>
+                    <value>com.kosei.adcreatorworkflow.hadoop.rest.RestResourceReducer</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>20</value>
+                </property>
+
+                <property>
+                    <name>managementClientApiToken</name>
+                    <value>${managementClientApiToken}</value>
+                </property>
+                <property>
+                    <name>managementClientApiEndPoint</name>
+                    <value>${managementClientApiEndPoint}</value>
+                </property>
+                <property>
+                    <name>awsAccessKey</name>
+                    <value>${awsAccessKey}</value>
+                </property>
+                <property>
+                    <name>awsSecretKey</name>
+                    <value>${awsSecretKey}</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.job.inputformat.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.catalogs.data.NullInputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.map.output.key.class</name>
+                    <value>org.apache.hadoop.io.LongWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.map.output.value.class</name>
+                    <value>org.apache.hadoop.io.BytesWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.outputformat.class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.key.class</name>
+                    <value>org.apache.hadoop.io.LongWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.value.class</name>
+                    <value>org.apache.hadoop.io.BytesWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${projectTempDataPath}/fetch-catalog-versions</value>
+                </property>
+            </configuration>
+        </map-reduce>
+        <ok to="continue-if-catalogs-to-process"/>
+        <error to="fail"/>
+    </action>
+
+    <decision name="continue-if-catalogs-to-process">
+        <switch>
+            <case to="parse-catalogs">${ hadoop:counters('fetch-catalog-versions')[RECORDS][REDUCE_OUT] gt 0 }</case>
+            <default to="end"/>
+        </switch>
+    </decision>
+
+    <action name='parse-catalogs'>
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${projectTempDataPath}/parse-catalogs"/>
+            </prepare>
+
+            <configuration>
+
+                <property>
+                    <name>managementClientApiToken</name>
+                    <value>${managementClientApiToken}</value>
+                </property>
+                <property>
+                    <name>managementClientApiEndPoint</name>
+                    <value>${managementClientApiEndPoint}</value>
+                </property>
+                <property>
+                    <name>awsAccessKey</name>
+                    <value>${awsAccessKey}</value>
+                </property>
+                <property>
+                    <name>awsSecretKey</name>
+                    <value>${awsSecretKey}</value>
+                </property>
+
+                <property>
+                    <name>mapred.mapper.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.reducer.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.map.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.catalogs.ParseCatalogsMapper</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.reduce.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.catalogs.ParseCatalogsReducer</value>
                 </property>
                 <property>
                     <name>mapreduce.job.reduces</name>
@@ -93,7 +165,7 @@
 
                 <property>
                     <name>mapreduce.job.inputformat.class</name>
-                    <value>com.kosei.adcreatorworkflow.hadoop.io.GoogleCatalogInputFormat</value>
+                    <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
                 </property>
                 <property>
                     <name>mapreduce.map.output.key.class</name>
@@ -101,8 +173,93 @@
                 </property>
                 <property>
                     <name>mapreduce.map.output.value.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.catalogs.data.ProductItemWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.outputformat.class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.key.class</name>
+                    <value>org.apache.hadoop.io.NullWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.output.value.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.catalogs.data.ProductItemWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${projectTempDataPath}/fetch-catalog-versions</value>
+                </property>
+                <property>
+                    <name>mapreduce.output.fileoutputformat.outputdir</name>
+                    <value>${projectTempDataPath}/parse-catalogs</value>
+                </property>
+            </configuration>
+        </map-reduce>
+        <ok to="convert-to-ad-creator-assets"/>
+        <error to="fail"/>
+    </action>
+
+
+
+    <action name='convert-to-ad-creator-assets'>
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${advertisersRoot}/catalogs/${wf:actionData('job-timestamp-properties')['TIMESTAMP']}/parsed-catalog"/>
+            </prepare>
+
+            <configuration>
+                <property>
+                    <name>catalog.timestamp</name>
+                    <value>${wf:actionData('job-timestamp-properties')['TIMESTAMP']}</value>
+                </property>
+                <property>
+                    <name>mapred.mapper.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.reducer.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.map.class</name>
+                    <value>com.kosei.adcreatorworkflow.hadoop.ConvertToAdCreatorAssetMapper</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.reduce.class</name>
+                    <value>org.apache.hadoop.mapreduce.Reducer</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.reduces</name>
+                    <value>20</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.job.inputformat.class</name>
+                    <value>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</value>
+                </property>
+                <property>
+                    <name>mapreduce.input.fileinputformat.inputdir</name>
+                    <value>${projectTempDataPath}/parse-catalogs</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.map.output.key.class</name>
+                    <value>org.apache.hadoop.io.NullWritable</value>
+                </property>
+                <property>
+                    <name>mapreduce.map.output.value.class</name>
                     <value>com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable</value>
                 </property>
+
+
                 <property>
                     <name>mapreduce.job.outputformat.class</name>
                     <value>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</value>
@@ -116,29 +273,23 @@
                     <value>com.kosei.adcreatorworkflow.hadoop.io.AdCreatorAssetsWritable</value>
                 </property>
                 <property>
-                    <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/raw-catalog</value>
-                </property>
-                <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/parsed-catalog</value>
+                    <value>${advertisersRoot}/catalogs/${wf:actionData('job-timestamp-properties')['TIMESTAMP']}/parsed-catalog</value>
                 </property>
-                <property>
-                    <name>job.timestamp</name>
-                    <value>${wf:actionData('catalog-pull')['TIMESTAMP']}</value>
-                </property>
+
             </configuration>
         </map-reduce>
         <ok to="crawl-catalog"/>
         <error to="fail"/>
     </action>
 
+
     <action name='crawl-catalog'>
         <map-reduce>
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
             <prepare>
-                <delete path="${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/image-catalog"/>
+                <delete path="${advertisersRoot}/catalogs/${wf:actionData('job-timestamp-properties')['TIMESTAMP']}/image-catalog"/>
             </prepare>
 
             <configuration>
@@ -178,11 +329,11 @@
 
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/parsed-catalog</value>
+                    <value>${advertisersRoot}/catalogs/${wf:actionData('job-timestamp-properties')['TIMESTAMP']}/parsed-catalog</value>
                 </property>
                 <property>
                     <name>mapreduce.output.fileoutputformat.outputdir</name>
-                    <value>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/image-catalog</value>
+                    <value>${advertisersRoot}/catalogs/${wf:actionData('job-timestamp-properties')['TIMESTAMP']}/image-catalog</value>
                 </property>
 
             </configuration>
@@ -201,8 +352,9 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
+            <env-var>HADOOP_USER_NAME=${user.name}</env-var>
             <exec>catalog-archiver.sh</exec>
-            <argument>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/image-catalog</argument>
+            <argument>${advertisersRoot}/catalogs/${wf:actionData('job-timestamp-properties')['TIMESTAMP']}/image-catalog</argument>
             <argument>${advertisersRoot}</argument>
             <file>scripts/catalog-archiver.sh</file>
         </shell>
@@ -267,7 +419,7 @@
                 </property>
                 <property>
                     <name>mapreduce.input.fileinputformat.inputdir</name>
-                    <value>${advertisersRoot}/catalogs/${wf:actionData('catalog-pull')['TIMESTAMP']}/parsed-catalog</value>
+                    <value>${advertisersRoot}/catalogs/${wf:actionData('job-timestamp-properties')['TIMESTAMP']}/parsed-catalog</value>
                 </property>
                 <property>
                     <name>api.token</name>

@@ -3,102 +3,19 @@ apply plugin: 'distribution'
 
 buildscript {
     apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-buildscript.gradle", to: buildscript
+//    apply from: "file:///Users/hess/projects/koseime/servicesCommon/shared/src/main/gradle/buildscript.gradle", to: buildscript
     repositories { // for dataops dependencies
         mavenCentral()
         mavenLocal()
     }
     dependencies {
         classpath 'ws.antonov.gradle.plugins:gradle-plugin-protobuf:0.9.1'
-        classpath group: 'com.kosei.dataops', name: 'gradle-dataops-plugin', version: '0.4-SNAPSHOT'
     }
 }
 
 apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-release.gradle"
-
-apply plugin: 'com.kosei.dataops'
-
-dataops {
-
-    environment("dev") {
-        defaultFS = "hdfs://hivecluster2-srv6.labs.lan:8020"
-        hadoopUser = "kosei"
-        jobTracker = "hivecluster2-srv6.labs.lan:8032"
-        oozieURL = "http://hivecluster2-srv7.labs.lan:11000/oozie"
-        hbaseZookeeperQuorum =
-                "hivecluster2-srv2.labs.lan,hivecluster2-srv6.labs.lan,hivecluster2-srv4.labs.lan"
-        hbaseZookeeperPort = 2181
-        hbaseZookeeperNode = "/hbase"
-        managementClientApiEndPoint="http://dev1.kosei.me:8380"
-        managementClientApiToken="igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3"
-        awsAccessKey="AKIAIVEJZIYPGUU4T3WQ"
-        awsSecretKey="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"
-
-    }
-    environment("release") {
-        defaultFS = "hdfs://hivecluster6.labs.lan:8020"
-        hadoopUser = "kosei"
-        jobTracker = "hivecluster6.labs.lan:8032"
-        oozieURL = "http://hivecluster6.labs.lan:11000/oozie"
-        hbaseZookeeperQuorum = "hivecluster6.labs.lan"
-        hbaseZookeeperPort = 2181
-        hbaseZookeeperNode = "/hbase"
-        managementClientApiEndPoint="https://sentry.kosei.com"
-        managementClientApiToken="igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3"
-        awsAccessKey="AKIAIVEJZIYPGUU4T3WQ"
-        awsSecretKey="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"
-    }
-
-    environment("hess") {
-        defaultFS = "hdfs://dell3.hessinteractive.local:8020"
-        hadoopUser = "jonathan"
-        jobTracker = "dell3.hessinteractive.local:8032"
-        oozieURL = "http://dell3.hessinteractive.local:11000/oozie"
-        hbaseZookeeperQuorum =
-                "dell3.hessinteractive.local,dell2.hessinteractive.local,dell1.hessinteractive.local"
-        hbaseZookeeperPort = 2181
-        hbaseZookeeperNode = "/hbase"
-        managementClientApiEndPoint="https://sentry.kosei.com"
-        managementClientApiToken="igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3"
-        awsAccessKey="AKIAIVEJZIYPGUU4T3WQ"
-        awsSecretKey="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"
-    }
-    environment("preprod") {
-        println "Configuring environment kosei production environment"
-        defaultFS = "hdfs://namenode.internal.kosei.me:8020"
-        jobTracker = "namenode.internal.kosei.me:8032"
-        hadoopUser = "preprod"
-        oozieURL = "http://namenode.internal.kosei.me:11000/oozie"
-        proxyServer = "localhost:1081"
-        hbaseZookeeperQuorum =
-                "hbasemaster.internal.kosei.me,hbase1.internal.kosei.me,hbase3.internal.kosei.me,hbase2.internal.kosei.me"
-        hbaseZookeeperPort = 2181
-        hbaseZookeeperNode = "/hbase"
-        managementClientApiEndPoint="https://sentry.kosei.com"
-        managementClientApiToken="igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3"
-        awsAccessKey="AKIAIVEJZIYPGUU4T3WQ"
-        awsSecretKey="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"
-//        hadoopConfigurationProperties = ["name":"value",
-//                                         "name2":"value2"]
-    }
-    environment("kosei") {
-        println "Configuring environment kosei production environment"
-        defaultFS = "hdfs://namenode.internal.kosei.me:8020"
-        jobTracker = "namenode.internal.kosei.me:8032"
-        hadoopUser = "kosei"
-        oozieURL = "http://namenode.internal.kosei.me:11000/oozie"
-        proxyServer = "localhost:1081"
-        hbaseZookeeperQuorum =
-                "hbasemaster.internal.kosei.me,hbase1.internal.kosei.me,hbase3.internal.kosei.me,hbase2.internal.kosei.me"
-        hbaseZookeeperPort = 2181
-        hbaseZookeeperNode = "/hbase"
-        managementClientApiEndPoint="https://sentry.kosei.com"
-        managementClientApiToken="igh8caahbenv2rc09edboa5vsn0a1pdm2sru6pitsatk7c4bh3"
-        awsAccessKey="AKIAIVEJZIYPGUU4T3WQ"
-        awsSecretKey="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"
-//        hadoopConfigurationProperties = ["name":"value",
-//                                         "name2":"value2"]
-    }
-}
+apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-dataops.gradle"
+//apply from: "file:///Users/hess/projects/koseime/servicesCommon/shared/src/main/gradle/dataops.gradle"
 
 project("common") {
     apply from: "http://repository-kosei.forge.cloudbees.com/release/com/kosei/services/common-shared/${commonVersion}/common-shared-${commonVersion}-base.gradle"
