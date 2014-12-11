@@ -6,6 +6,7 @@ NAMENODE_UNIXUSER=kosei
 KEYFILE=~/.ssh/kosei-eastcoastpem.pem
 HDFS_BASEDIR=/user/jonathan/testing
 
+echo "HADOOP_USER_NAME=""
 #NAMENODE_HOST=dell3.hessinteractive.local
 #NAMENODE_UNIXUSER=jonathan
 #KEYFILE=~/.ssh/id_rsa

@@ -2,6 +2,8 @@
 # argument 1: processed catalogs root
 # argument 2: advertisers root
 
+echo "HADOOP_USER_NAME=$HADOOP_USER_NAME"
+
 set -x
 
 ls_command="hadoop fs -ls $1"

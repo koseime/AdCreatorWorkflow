@@ -78,6 +78,8 @@ public class ConvertToAdCreatorAssetMapper extends Mapper<
     ad.putMeta(new Text("catalog_id"), new BytesWritable(longToBytes(value.catalogId)));
     ad.putMeta(new Text("catalog_version_id"), new BytesWritable(longToBytes(value.catalogVersionId)));
     ad.putMeta(new Text("catalog_timestamp"), new BytesWritable(longToBytes(value.catalogTimestamp)));
+    ad.putMeta(new Text("category"), new BytesWritable(gpi.getGoogleProductCategory().getBytes(
+        Charsets.UTF_8)));
 
     if (availability.equals("out of stock")) {
       ad.putMeta(new Text("category"), new BytesWritable("DELETED".getBytes()));

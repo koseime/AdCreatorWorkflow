@@ -352,10 +352,10 @@
                     <value>${queueName}</value>
                 </property>
             </configuration>
-            <env-var>HADOOP_USER_NAME=${user.name}</env-var>
             <exec>catalog-archiver.sh</exec>
             <argument>${advertisersRoot}/catalogs/${wf:actionData('job-timestamp-properties')['TIMESTAMP']}/image-catalog</argument>
             <argument>${advertisersRoot}</argument>
+            <env-var>HADOOP_USER_NAME=${wf:conf('user.name')}</env-var>
             <file>scripts/catalog-archiver.sh</file>
         </shell>
         <ok to="upload-catalog-meta"/>
